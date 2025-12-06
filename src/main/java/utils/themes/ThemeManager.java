@@ -4,6 +4,7 @@ public class ThemeManager {
 
     private static Theme currentTheme = new Theme("classic");
 
+
     public static void setTheme(String name) {
         currentTheme = new Theme(name);
     }

@@ -1,9 +1,10 @@
 package brush;
 
-import java.awt.*;
+import javafx.scene.paint.Color;
 
 public abstract class AbstractBrush {
-    public Color color;
-    public double strokeWidth;
+    private String name;
+    private Color color;
+    private double strokeWidth;
 
 }

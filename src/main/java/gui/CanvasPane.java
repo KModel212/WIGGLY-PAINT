@@ -1,4 +1,6 @@
 package gui;
 
-public class CanvasPane {
+import javafx.scene.layout.StackPane;
+
+public class CanvasPane extends StackPane {
 }

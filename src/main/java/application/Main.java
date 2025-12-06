@@ -5,25 +5,29 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+import render.BackgroundRender;
+import utils.config.Config;
+
 
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        BorderPane borderPane = new BorderPane();
-        borderPane.setPrefWidth(600);
-        borderPane.setPrefHeight(800);
+        BorderPane root = new BorderPane();
+        root.setPrefWidth(Config.getInt("application.default_width"));
+        root.setPrefHeight(Config.getInt("application.default_height"));
+        root.setBackground(BackgroundRender.dotBackgroundFromConfig());
 
-        //add MenuPane to top  hbox
-
-
-        //add CanvasPane to left  stackpane
+        //add MenuPane to top - hbox
 
 
-        //add BrushPane to right  vbox
+        //add CanvasPane to left - stackpane 400 * 400
 
 
-        //add OptionPane to bottom  hbox
+        //add BrushPane to right - vbox
+
+
+        //add OptionPane to bottom - hbox
 
 
         /*
@@ -35,7 +39,7 @@ public class Main extends Application {
         hBox.getChildren().addAll(mineSweeperPane, controlGridPane);
         */
 
-        Scene scene = new Scene(borderPane);
+        Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setTitle("WigglyPaint");
         primaryStage.show();

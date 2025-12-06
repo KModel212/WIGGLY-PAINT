@@ -1,4 +1,6 @@
 package gui;
 
-public class OptionPane {
+import javafx.scene.layout.HBox;
+
+public class OptionPane extends HBox {
 }

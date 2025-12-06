@@ -1,4 +1,6 @@
 package gui;
 
-public class BrushPane {
+import javafx.scene.layout.VBox;
+
+public class BrushPane extends VBox {
 }

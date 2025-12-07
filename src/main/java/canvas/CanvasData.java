@@ -1,98 +1,75 @@
 package canvas;
 
+import gui.CanvasPane;
 import utils.themes.ThemeManager;
 
 public class CanvasData {
 
-    private final int width;
-    private final int height;
+    // 5 color indices
+    public static final byte BG        = 0;
+    public static final byte FG        = 1;
+    public static final byte PRIMARY   = 2;
+    public static final byte SECONDARY = 3;
+    public static final byte ACCENT    = 4;
 
-    /**
-     * Stores color indexes (0–4):
-     * 0 = bg
-     * 1 = fg
-     * 2 = primary
-     * 3 = secondary
-     * 4 = accent
-     */
-    private final byte[][] pixels;
+    private static final int SIZE = 200;
 
-    public static final int BG = 0;
-    public static final int FG = 1;
-    public static final int PRIMARY = 2;
-    public static final int SECONDARY = 3;
-    public static final int ACCENT = 4;
+    // The framebuffer: 200 x 200 pixels, each storing a value 0–4
+    private final byte[][] pixels = new byte[SIZE][SIZE];
+    public byte[][] wiggleFrameA = new byte[SIZE][SIZE];
+    public byte[][] wiggleFrameB = new byte[SIZE][SIZE];
 
-    public CanvasData(int width, int height) {
-        this.width = width;
-        this.height = height;
+    public CanvasData() {
+        initWiggleFrames(BG);      // Initialize using PRIMARY (or BG)
+    }
 
-        pixels = new byte[width][height];
 
-        // fill canvas with background index
-        byte bgIndex = (byte) BG;
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                pixels[x][y] = bgIndex;
+    private void initWiggleFrames(byte color) {
+        for (int x = 0; x < SIZE; x++) {
+            for (int y = 0; y < SIZE; y++) {
+                wiggleFrameA[x][y] = color;
+                wiggleFrameB[x][y] = color;
             }
         }
     }
 
-    // ----------------------------
-    // PIXEL GET/SET
-    // ----------------------------
-
-    public void setPixel(int x, int y, int colorIndex) {
-        if (x < 0 || x >= width) return;
-        if (y < 0 || y >= height) return;
-
-        pixels[x][y] = (byte) colorIndex;
+    public int getSize() {
+        return SIZE;
     }
-
-    public int getPixel(int x, int y) {
-        if (x < 0 || x >= width) return BG;
-        if (y < 0 || y >= height) return BG;
-
-        return pixels[x][y] & 0xFF;
-    }
-
-    // ----------------------------
-    // CLEAR
-    // ----------------------------
-
-    public void clear() {
-        byte bg = (byte) BG;
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                pixels[x][y] = bg;
-            }
-        }
-    }
-
-    // ----------------------------
-    // COPY (Undo)
-    // ----------------------------
-
-    public CanvasData copy() {
-        CanvasData copy = new CanvasData(width, height);
-        for (int x = 0; x < width; x++) {
-            System.arraycopy(pixels[x], 0, copy.pixels[x], 0, height);
-        }
-        return copy;
-    }
-
-    // ----------------------------
-    // RAW ACCESSOR (Renderer)
-    // ----------------------------
 
     public byte[][] raw() {
         return pixels;
     }
+    public byte[][] A() {
+        return wiggleFrameA;
+    }
+    public byte[][] B() {
+        return wiggleFrameB;
+    }
 
-    // ----------------------------
-    // INFO
-    // ----------------------------
+    // WRITE pixel
+    public void set(int layeridx, int x, int y, byte index) {
+        if (x < 0 || y < 0 || x >= SIZE || y >= SIZE) return;
+        switch (layeridx){
+            case 0: pixels[x][y] = index; break;
+            case 1: wiggleFrameA[x][y] = index; break;
+            case 2: wiggleFrameB[x][y] = index; break;
+            default: break;
+        }
+    }
 
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
+//    // READ pixel
+//    public byte get(int x, int y) {
+//        if (x < 0 || y < 0 || x >= SIZE || y >= SIZE) return BG;
+//        return pixels[x][y];
+//    }
+//
+//    // CLEAR screen
+//    public void clear() {
+//        for (int i = 0; i < SIZE; i++) {
+//            for (int j = 0; j < SIZE; j++) {
+//                pixels[i][j] = BG;
+//            }
+//        }
+//    }
 }

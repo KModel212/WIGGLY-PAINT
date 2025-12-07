@@ -36,8 +36,9 @@ public class Main extends Application {
         root.setLeft(canvasPane);
         BorderPane.setMargin(canvasPane, new Insets(20));
 
-        CanvasData data = new CanvasData(500, 500);
+        CanvasData data = new CanvasData();
         CanvasController controller = new CanvasController(canvasPane, data);
+        controller.startWiggleLoop();
 
         //add BrushPane to right - vbox
 

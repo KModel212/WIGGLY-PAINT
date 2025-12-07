@@ -102,7 +102,7 @@ public class CanvasController {
         GraphicsContext gc = pane.layer0.getGraphicsContext2D();
         byte[][] pixels = data.raw();
 
-        int size = pane.getCanvasSize();
+        int size = pane.getDisplaySize();
 
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
@@ -124,4 +124,5 @@ public class CanvasController {
         gc.setLineWidth(3);
         gc.strokeRect(0, 0, size, size);
     }
+
 }

@@ -8,44 +8,68 @@ import utils.themes.ThemeManager;
 
 public class CanvasPane extends Pane {
 
-    private int canvasSize = 500;
+    // internal pixel buffer
+    private final int internalSize = 200;
 
-    public final Canvas layer0 = new Canvas(canvasSize, canvasSize);  // main canvas
-    public final Canvas layer1 = new Canvas(canvasSize, canvasSize);  // preview
-    public final Canvas layer2 = new Canvas(canvasSize, canvasSize);  // overlays
+    // visible display size
+    private final int displaySize = 500;
+
+    public final Canvas layer0 = new Canvas(internalSize, internalSize);  // background + drawing
+    public final Canvas layer1 = new Canvas(internalSize, internalSize);  // preview
+    public final Canvas layer2 = new Canvas(internalSize, internalSize);  // overlays
 
     private final StackPane layerPane = new StackPane();
 
     public CanvasPane() {
 
+        // Turn off smoothing = crisp pixel-art
         layer0.getGraphicsContext2D().setImageSmoothing(false);
         layer1.getGraphicsContext2D().setImageSmoothing(false);
         layer2.getGraphicsContext2D().setImageSmoothing(false);
 
-        // Add canvases to the stack pane
+        // Put all canvas layers inside stack
         layerPane.getChildren().addAll(layer0, layer1, layer2);
 
-        // Add the stack pane to this Pane
+        // SCALE the entire stack from 200 → 500 px
+        double scale = displaySize / (double) internalSize;
+        layerPane.setScaleX(scale);
+        layerPane.setScaleY(scale);
+
+        // Let the pane occupy 500x500
+        layerPane.setPrefSize(displaySize, displaySize);
+        setPrefSize(displaySize, displaySize);
+
         getChildren().add(layerPane);
 
-        // --- NEW: initialize background ---
         initBackground();
-
     }
 
     private void initBackground() {
         var gc = layer0.getGraphicsContext2D();
 
-        // Background fill
+        // Fill background
         Color bg = ThemeManager.get().bg;
         gc.setFill(bg);
-        gc.fillRect(0, 0, canvasSize, canvasSize);
+        gc.fillRect(0, 0, internalSize, internalSize);
 
-        // ---- NEW: draw black border ----
+        // Black border (drawn on 200x200, scaled to 500)
         gc.setStroke(Color.BLACK);
-        gc.setLineWidth(3);
-        gc.strokeRect(0, 0, canvasSize, canvasSize);
+        gc.setLineWidth(2);
+        gc.strokeRect(0, 0, internalSize, internalSize);
     }
 
-    public int getCanvasSize() {return canvasSize;}
+    /** Converts screen mouse X (0–500) → internal pixel X (0–200) */
+    public double toInternalX(double mouseX) {
+        return mouseX * internalSize / displaySize;
+    }
+
+    /** Converts screen mouse Y (0–500) → internal pixel Y (0–200) */
+    public double toInternalY(double mouseY) {
+        return mouseY * internalSize / displaySize;
+    }
+
+    public int getInternalSize() { return internalSize; }
+    public int getDisplaySize() { return displaySize; }
+
+
 }

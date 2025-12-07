@@ -1,5 +1,6 @@
 package application;
 
+import gui.BrushPane;
 import canvas.CanvasData;
 import controller.CanvasController;
 import gui.CanvasPane;
@@ -41,6 +42,17 @@ public class Main extends Application {
         controller.startWiggleLoop();
 
         //add BrushPane to right - vbox
+        // -------------------------
+        // RIGHT : BrushPane ✅ (ต้องสร้างก่อน Controller)
+        // -------------------------
+        BrushPane brushPane = new BrushPane();
+        root.setRight(brushPane);
+        BorderPane.setMargin(brushPane, new Insets(20));
+
+        // -------------------------
+        // DATA + CONTROLLER ✅ (ส่ง brushPane เข้าไป)
+        // -------------------------
+
 
 
         //add OptionPane to bottom - hbox

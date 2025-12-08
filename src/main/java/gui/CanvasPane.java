@@ -24,10 +24,11 @@ public class CanvasPane extends Pane {
     public final Canvas layer2 = new Canvas(internalSize, internalSize);
     public final Canvas layer3 = new Canvas(internalSize, internalSize);
 
+
+
     private final StackPane layerPane = new StackPane();
 
     public CanvasPane() {
-
         // Crisp pixel-art rendering
         layer0.getGraphicsContext2D().setImageSmoothing(false);
         layer1.getGraphicsContext2D().setImageSmoothing(false);

@@ -12,16 +12,16 @@ public class BrushController {
     private final BrushPane pane;
 
     // Brush objects
-    private final Brushable pencil      = new PencilBrush(1);
-//    private final Brushable fountain    = new FountainBrush(50,5);
+    private final Paintable pencil      = new PencilBrush(1);
+    private final Paintable fountain    = new FountainBrush(5 , 0.6);
+    private final Paintable marker      = new PencilBrush(5);
+    private final Paintable spray       = new SprayBrush(10,0);
 //    private final Brushable highlightA  = new HighlightPen(50,5);
 //    private final Brushable highlightB  = new HighlightPen(50,5);
 //    private final Brushable highlightC  = new HighlightPen(50,5);
-    private final Brushable marker      = new PencilBrush(5);
-//    private final Brushable spray       = new SprayPen(50,5);
 //    private final Brushable eraser      = new EraserPen(50,5);
 
-    private Brushable activeBrush = null;
+    private Paintable activeBrush = null;
     private Node currentBrushNode = null;
 
     public BrushController(BrushPane pane) {
@@ -29,25 +29,25 @@ public class BrushController {
 
         // Attach events
         attach(pane.pencilIcon,     pencil);
-//        attach(pane.fountainIcon,   fountain);
+        attach(pane.fountainIcon,   fountain);
+        attach(pane.markerIcon,     marker);
+        attach(pane.sprayIcon,      spray);
 //        attach(pane.highlightAIcon, highlightA);
 //        attach(pane.highlightBIcon, highlightB);
 //        attach(pane.highlightCIcon, highlightC);
-        attach(pane.markerIcon,     marker);
-//        attach(pane.sprayIcon,      spray);
 //        attach(pane.eraserIcon,     eraser);
 
         selectBrush(pencil, pane.pencilIcon);
     }
 
-    private void attach(Node icon, Brushable brush) {
+    private void attach(Node icon, Paintable brush) {
         icon.setOnMouseClicked(e -> selectBrush(brush, icon));
     }
 
     // ------------------------------
     // Brush Selection Animation
     // ------------------------------
-    private void selectBrush(Brushable brush, Node icon) {
+    private void selectBrush(Paintable brush, Node icon) {
 
         activeBrush = brush;
 
@@ -85,7 +85,7 @@ public class BrushController {
         scaleBack.play();
     }
 
-    public Brushable getActiveBrush() {
+    public Paintable getActiveBrush() {
         return activeBrush;
     }
 }

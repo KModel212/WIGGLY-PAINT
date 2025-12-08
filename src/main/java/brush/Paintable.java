@@ -2,7 +2,7 @@ package brush;
 
 import canvas.CanvasData;
 
-public interface Brushable {
+public interface Paintable {
 
     /**
      * Called continuously while the mouse/finger is moving.
@@ -13,5 +13,7 @@ public interface Brushable {
      * @param speed  motion speed since last event
      */
     void paintOnEveryLayer(CanvasData canvas, double x, double y, double speed);
+
+    void resetStroke();
 
 }

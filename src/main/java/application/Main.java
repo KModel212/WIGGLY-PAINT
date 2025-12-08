@@ -9,7 +9,8 @@ import gui.MenuPane;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -30,13 +31,13 @@ public class Main extends Application {
         root.setBackground(BackgroundRender.dotBackgroundFromConfig());
 
         //add MenuPane to top - hbox
-        root.setTop(new MenuPane());
+
 
         //add CanvasPane to left - stackpane 500 * 500
         CanvasPane canvasPane = new CanvasPane();
         canvasPane.setPrefWidth(500);
         canvasPane.setPrefHeight(500);
-        root.setLeft(canvasPane);
+        root.setCenter(canvasPane);
         BorderPane.setMargin(canvasPane, new Insets(20));
 
         CanvasData data = new CanvasData();
@@ -48,6 +49,9 @@ public class Main extends Application {
         root.setRight(brushPane);
 
         canvasController.startWiggleLoop();
+
+        root.setTop(new MenuPane());
+
 
         /*
         MineSweeperPane mineSweeperPane = new MineSweeperPane();

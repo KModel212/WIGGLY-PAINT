@@ -67,6 +67,7 @@ public class MenuPane extends Pane {
                 "-fx-text-fill: " + toHex(ThemeManager.get().fg) + ";" +
                         "-fx-font-weight: bold;"
         );
+
         return label;
     }
 

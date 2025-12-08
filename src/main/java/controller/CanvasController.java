@@ -1,6 +1,6 @@
 package controller;
 
-import brush.Brushable;
+import brush.Paintable;
 import canvas.CanvasData;
 import gui.CanvasPane;
 import javafx.animation.KeyFrame;
@@ -48,11 +48,15 @@ public class CanvasController {
 
             drawing = true;
 
+            Paintable tool = brushController.getActiveBrush();
+            if (tool != null) {
+                tool.resetStroke();      // ★ THIS FIXES THE CONTINUOUS-LINE BUG
+            }
+
             lastX = e.getX();
             lastY = e.getY();
             lastTime = System.nanoTime();
 
-            Brushable tool = brushController.getActiveBrush();   // ★ ask brush controller
             if (tool != null) {
                 tool.paintOnEveryLayer(data, lastX, lastY, 0);
             }
@@ -80,12 +84,12 @@ public class CanvasController {
             double dx = x - lastX;
             double dy = y - lastY;
 
-            if (dx*dx + dy*dy < minDistance*minDistance) return;
+            if (dx * dx + dy * dy < minDistance * minDistance) return;
 
             double dt = (now - lastTime) / 1e9;
-            double speed = Math.sqrt(dx*dx + dy*dy) / dt;
+            double speed = Math.sqrt(dx * dx + dy * dy) / dt;
 
-            Brushable tool = brushController.getActiveBrush();   // ★ updated
+            Paintable tool = brushController.getActiveBrush();   // ★ updated
             if (tool != null) {
                 tool.paintOnEveryLayer(data, x, y, speed);
             }
@@ -140,11 +144,11 @@ public class CanvasController {
 
                 gc.setFill(
                         switch (idx) {
-                            case CanvasData.FG        -> ThemeManager.get().fg;
-                            case CanvasData.PRIMARY   -> ThemeManager.get().primary;
+                            case CanvasData.FG -> ThemeManager.get().fg;
+                            case CanvasData.PRIMARY -> ThemeManager.get().primary;
                             case CanvasData.SECONDARY -> ThemeManager.get().secondary;
-                            case CanvasData.ACCENT    -> ThemeManager.get().accent;
-                            default                   -> ThemeManager.get().bg;
+                            case CanvasData.ACCENT -> ThemeManager.get().accent;
+                            default -> ThemeManager.get().bg;
                         }
                 );
 

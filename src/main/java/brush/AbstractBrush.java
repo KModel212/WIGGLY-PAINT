@@ -72,7 +72,6 @@ public abstract class AbstractBrush implements Paintable {
         Random random = new Random();
 
         int rdm = random.nextInt(4);
-        System.out.print(rdm);
         switch (rdm) {
 
             case 0: // Perfect circle

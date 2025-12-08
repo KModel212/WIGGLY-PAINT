@@ -1,7 +1,6 @@
 package controller;
 
 import brush.Brushable;
-import brush.MarkerPen;
 import canvas.CanvasData;
 import gui.CanvasPane;
 import javafx.animation.KeyFrame;
@@ -17,56 +16,61 @@ public class CanvasController {
 
     private final CanvasPane pane;
     private final CanvasData data;
+    private final BrushController brushController;   // ★ NEW ★
 
     private double lastX, lastY;
     private long lastTime;
     private boolean drawing = false;
 
-    private Brushable tool = new MarkerPen(10,0); // default tool
-
-    // -------------------------
-    // DELAY SETTINGS (move them OUTSIDE the method)
-    // -------------------------
+    // throttle settings
     private long lastDrawTime = 0;
-    private final long DRAG_DELAY_NS = 6_000_000; // 6 ms throttle
-    private final double minDistance = 1.1;       // minimum movement
-    // -------------------------
+    private final long DRAG_DELAY_NS = 20_000_000;  // 20 ms
+    private final double minDistance = 1.1;
 
-    public CanvasController(CanvasPane pane, CanvasData data) {
+    public CanvasController(CanvasPane pane, CanvasData data, BrushController brushController) {
         this.pane = pane;
         this.data = data;
+        this.brushController = brushController;   // ★ inject brush controller
+
         attachEvents();
+
+        // Pre-render both wiggle frames
         redraw(1);
         redraw(2);
     }
 
     private void attachEvents() {
 
-        // Mouse Pressed
+        // =======================
+        // Mouse Press
+        // =======================
         pane.layer3.setOnMousePressed(e -> {
 
-            System.out.println("PRESS at " + e.getX() + ", " + e.getY());
-
             drawing = true;
+
             lastX = e.getX();
             lastY = e.getY();
             lastTime = System.nanoTime();
 
-            tool.paint(data, lastX, lastY, 0);
+            Brushable tool = brushController.getActiveBrush();   // ★ ask brush controller
+            if (tool != null) {
+                tool.paintOnEveryLayer(data, lastX, lastY, 0);
+            }
 
             redraw(1);
             redraw(2);
         });
 
 
-        // Mouse Dragged
+        // =======================
+        // Mouse Drag
+        // =======================
         pane.layer3.setOnMouseDragged(e -> {
 
             if (!drawing) return;
 
             long now = System.nanoTime();
 
-            // throttle (6ms)
             if (now - lastDrawTime < DRAG_DELAY_NS) return;
             lastDrawTime = now;
 
@@ -76,15 +80,15 @@ public class CanvasController {
             double dx = x - lastX;
             double dy = y - lastY;
 
-            // skip tiny movements
-            if (dx * dx + dy * dy < minDistance * minDistance) return;
+            if (dx*dx + dy*dy < minDistance*minDistance) return;
 
-            // speed calculation
             double dt = (now - lastTime) / 1e9;
-            double speed = Math.sqrt(dx * dx + dy * dy) / dt;
+            double speed = Math.sqrt(dx*dx + dy*dy) / dt;
 
-            // draw
-            tool.paint(data, x, y, speed);
+            Brushable tool = brushController.getActiveBrush();   // ★ updated
+            if (tool != null) {
+                tool.paintOnEveryLayer(data, x, y, speed);
+            }
 
             lastX = x;
             lastY = y;
@@ -95,20 +99,18 @@ public class CanvasController {
         });
 
 
-        // Mouse Released
-        pane.layer3.setOnMouseReleased(e -> {
-            drawing = false;
-            System.out.println("RELEASE at " + e.getX() + ", " + e.getY());
-        });
+        // =======================
+        // Mouse Release
+        // =======================
+        pane.layer3.setOnMouseReleased(e -> drawing = false);
     }
 
 
-    // -------------------------
-    // RENDERING
-    // -------------------------
+    // ==========================
+    // RENDER
+    // ==========================
     public void redraw(int layerIndex) {
 
-        // pick the correct canvas
         Canvas layer = switch (layerIndex) {
             case 0 -> pane.layer0;
             case 1 -> pane.layer1;
@@ -119,12 +121,11 @@ public class CanvasController {
 
         GraphicsContext gc = layer.getGraphicsContext2D();
 
-        // choose the pixel buffer depending on layer
         byte[][] pixels = switch (layerIndex) {
-            case 0 -> data.raw(); // background or main pixels
-            case 1 -> data.A();   // wiggle frame A
-            case 2 -> data.B();   // wiggle frame B
-            case 3 -> data.raw(); // usually used only for overlay
+            case 0 -> data.raw();
+            case 1 -> data.A();
+            case 2 -> data.B();
+            case 3 -> data.raw();
             default -> data.raw();
         };
 
@@ -134,48 +135,52 @@ public class CanvasController {
 
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
+
                 int idx = pixels[x][y];
 
-                gc.setFill(switch (idx) {
-                    case CanvasData.FG        -> ThemeManager.get().fg;
-                    case CanvasData.PRIMARY   -> ThemeManager.get().primary;
-                    case CanvasData.SECONDARY -> ThemeManager.get().secondary;
-                    case CanvasData.ACCENT    -> ThemeManager.get().accent;
-                    default                   -> ThemeManager.get().bg;
-                });
+                gc.setFill(
+                        switch (idx) {
+                            case CanvasData.FG        -> ThemeManager.get().fg;
+                            case CanvasData.PRIMARY   -> ThemeManager.get().primary;
+                            case CanvasData.SECONDARY -> ThemeManager.get().secondary;
+                            case CanvasData.ACCENT    -> ThemeManager.get().accent;
+                            default                   -> ThemeManager.get().bg;
+                        }
+                );
 
                 gc.fillRect(x, y, 1, 1);
             }
         }
 
-        // Border for clarity (if needed)
+        // border
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1);
         gc.strokeRect(0, 0, size, size);
-
     }
 
+
+    // ==========================
+    // WIGGLE LOOP
+    // ==========================
     private int wiggleFrame = 0;
 
     public void startWiggleLoop() {
+
         Timeline t = new Timeline(
                 new KeyFrame(Duration.millis(100), e -> {
                     wiggleFrame = 1 - wiggleFrame;
 
                     if (wiggleFrame == 0) {
-                        pane.layer1.toFront();  // show A
+                        pane.layer1.toFront(); // frame A
                     } else {
-                        pane.layer2.toFront();  // show B
+                        pane.layer2.toFront(); // frame B
                     }
 
-                    // Always keep input layer (layer3) on top
-                    pane.layer3.toFront();
+                    pane.layer3.toFront(); // input layer always on top
                 })
         );
 
         t.setCycleCount(Timeline.INDEFINITE);
         t.play();
     }
-
-
 }

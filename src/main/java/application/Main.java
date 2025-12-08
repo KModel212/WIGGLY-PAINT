@@ -1,5 +1,6 @@
 package application;
 
+import controller.BrushController;
 import gui.BrushPane;
 import canvas.CanvasData;
 import controller.CanvasController;
@@ -12,6 +13,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import javafx.stage.StageStyle;
 import render.BackgroundRender;
 import utils.config.Config;
 
@@ -38,25 +40,14 @@ public class Main extends Application {
         BorderPane.setMargin(canvasPane, new Insets(20));
 
         CanvasData data = new CanvasData();
-        CanvasController controller = new CanvasController(canvasPane, data);
-        controller.startWiggleLoop();
-
-        //add BrushPane to right - vbox
-        // -------------------------
-        // RIGHT : BrushPane ✅ (ต้องสร้างก่อน Controller)
-        // -------------------------
         BrushPane brushPane = new BrushPane();
+
+        BrushController brushController = new BrushController(brushPane);
+        CanvasController canvasController = new CanvasController(canvasPane, data ,brushController);
+
         root.setRight(brushPane);
-        BorderPane.setMargin(brushPane, new Insets(20));
 
-        // -------------------------
-        // DATA + CONTROLLER ✅ (ส่ง brushPane เข้าไป)
-        // -------------------------
-
-
-
-        //add OptionPane to bottom - hbox
-
+        canvasController.startWiggleLoop();
 
         /*
         MineSweeperPane mineSweeperPane = new MineSweeperPane();
@@ -73,6 +64,7 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("WigglyPaint");
         primaryStage.setResizable(false);
+        //primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.show();
     }
 

@@ -3,11 +3,11 @@ package brush;
 import canvas.CanvasData;
 import java.util.Random;
 
-public class MarkerPen extends AbstractBrush {
+public class PencilBrush extends AbstractBrush {
 
     private final Random random = new Random();
 
-    public MarkerPen(int baseSize) {
+    public PencilBrush(int baseSize) {
         super(baseSize);
     }
 

@@ -45,7 +45,7 @@ public class MarkerPen extends AbstractBrush {
      */
     private boolean shape(int dx, int dy, int r) {
         int rdm = random.nextInt(4);
-        System.out.print(rdm);
+        //System.out.print(rdm);
         switch (rdm) {
 
             case 0: // Perfect circle

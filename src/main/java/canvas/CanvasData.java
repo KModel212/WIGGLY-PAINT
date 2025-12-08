@@ -58,6 +58,18 @@ public class CanvasData {
         }
     }
 
+    // CLEAR all framebuffer + wiggle frames
+    public void clearAll(byte color) {
+        for (int x = 0; x < SIZE; x++) {
+            for (int y = 0; y < SIZE; y++) {
+                pixels[x][y] = color;
+                wiggleFrameA[x][y] = color;
+                wiggleFrameB[x][y] = color;
+            }
+        }
+    }
+
+
 //    // READ pixel
 //    public byte get(int x, int y) {
 //        if (x < 0 || y < 0 || x >= SIZE || y >= SIZE) return BG;

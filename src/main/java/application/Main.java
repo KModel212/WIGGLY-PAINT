@@ -11,6 +11,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -41,36 +42,34 @@ public class Main extends Application {
         BorderPane.setMargin(canvasPane, new Insets(20));
 
         CanvasData data = new CanvasData();
+        // ===============================
+        // ✅ ส่ง CanvasPane เข้า MenuPane
+        // ===============================
+        MenuPane menuPane = new MenuPane(canvasPane, data);
+
+        // ===============================
+        // ส่วนอื่น ๆ ตามเดิม
+        // ===============================
         BrushPane brushPane = new BrushPane();
 
         BrushController brushController = new BrushController(brushPane);
         CanvasController canvasController = new CanvasController(canvasPane, data ,brushController);
 
         root.setRight(brushPane);
+        root.setTop(menuPane);
 
         canvasController.startWiggleLoop();
-
-        root.setTop(new MenuPane());
-
-
-        /*
-        MineSweeperPane mineSweeperPane = new MineSweeperPane();
-        ControlPane controlPane = new ControlPane(mineSweeperPane);
-        ControlGridPane controlGridPane = new ControlGridPane(controlPane);
-
-        GameLogic.getInstance().setControlPane(controlPane);
-        hBox.getChildren().addAll(mineSweeperPane, controlGridPane);
-        */
 
         Scene scene = new Scene(root ,
                 Config.getInt("application.default_width") ,
                 Config.getInt("application.default_height"));
+
         primaryStage.setScene(scene);
         primaryStage.setTitle("WigglyPaint");
         primaryStage.setResizable(false);
-        //primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.show();
     }
+
 
     public static void main(String[] args) {
         launch(args);

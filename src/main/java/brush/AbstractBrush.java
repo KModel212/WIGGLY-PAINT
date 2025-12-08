@@ -1,6 +1,7 @@
 package brush;
 
 import canvas.CanvasData;
+import utils.themes.ThemeManager;
 
 import java.util.Random;
 

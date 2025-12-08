@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -46,6 +47,19 @@ public class Main extends Application {
         // ✅ ส่ง CanvasPane เข้า MenuPane
         // ===============================
         MenuPane menuPane = new MenuPane(canvasPane, data);
+        // === MAKE MENUBAR DRAGGABLE ===
+        final double[] offsetX = new double[1];
+        final double[] offsetY = new double[1];
+
+        menuPane.setOnMousePressed(event -> {
+            offsetX[0] = event.getSceneX();
+            offsetY[0] = event.getSceneY();
+        });
+
+        menuPane.setOnMouseDragged(event -> {
+            primaryStage.setX(event.getScreenX() - offsetX[0]);
+            primaryStage.setY(event.getScreenY() - offsetY[0]);
+        });
 
         // ===============================
         // ส่วนอื่น ๆ ตามเดิม
@@ -60,11 +74,15 @@ public class Main extends Application {
 
         canvasController.startWiggleLoop();
 
-        Scene scene = new Scene(root ,
-                Config.getInt("application.default_width") ,
-                Config.getInt("application.default_height"));
+        Scene scene = new Scene(
+                root,
+                Config.getInt("application.default_width"),
+                Config.getInt("application.default_height")
+        );
+        scene.setFill(Color.TRANSPARENT);   // IMPORTANT ★
 
         primaryStage.setScene(scene);
+        primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setTitle("WigglyPaint");
         primaryStage.setResizable(false);
         primaryStage.show();

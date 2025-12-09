@@ -1,6 +1,7 @@
 package gui;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -9,6 +10,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import utils.themes.ThemeManager;
+
+import static javafx.scene.text.FontWeight.BOLD;
 
 public class MenuPane extends Pane {
 
@@ -26,7 +29,7 @@ public class MenuPane extends Pane {
     public final ContextMenu themeMenu = new ContextMenu();
 
     private final Line bottomLine = new Line();
-    private final Font font = Font.font("DejaVu Sans Mono", 14);
+    private final Font font = Font.font("Comic Sans MS", BOLD, 14);
 
 
     // ============================================================
@@ -59,14 +62,11 @@ public class MenuPane extends Pane {
         // ------------------------------------------------------------
         // Exit Button (square X)
         // ------------------------------------------------------------
-        btnExit = new Label("☒");
+        btnExit = new Label("exit!!");
         btnExit.setFont(font);
         btnExit.setTextFill(ThemeManager.get().fg);
         btnExit.setPadding(new Insets(0));
-        btnExit.setPrefSize(20, 20);
-        btnExit.setMinSize(20, 20);
-        btnExit.setMaxSize(20, 20);
-        btnExit.setStyle("-fx-alignment: center;");
+        btnExit.setAlignment(Pos.CENTER);
 
         // ------------------------------------------------------------
         // Layout + Spacer

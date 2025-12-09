@@ -1,0 +1,94 @@
+@startuml
+class utils.gif.GifSequenceWriter {
+- ImageWriter writer
+- ImageWriteParam params
+- IIOMetadata metadata
++ void writeFrame(BufferedImage)
++ void close()
+}
+
+
+class controller.CanvasController {
+- CanvasPane pane
+- CanvasData data
+- BrushController brushController
+- double lastX
+- long lastTime
+- boolean drawing
+- long lastDrawTime
+- {static} long DRAG_DELAY_NS
+- {static} double MIN_DISTANCE
+- int wiggleFrame
+- void attachEvents()
++ void redraw(int)
+- void drawCursorCircle(double,double,int)
++ void startWiggleLoop()
+}
+
+
+class utils.themes.ThemeManager {
+- {static} Theme currentTheme
+- {static} List<Runnable> listeners
++ {static} Theme get()
++ {static} void setTheme(String)
++ {static} void addListener(Runnable)
+}
+
+
+class utils.themes.Theme {
++ String name
++ Color bg
++ Color fg
++ Color primary
++ Color secondary
++ Color accent
+- Color loadColor(String)
+}
+
+
+class utils.config.Config {
+- {static} Properties props
+- {static} void load(String)
++ {static} String getString(String)
++ {static} double getDouble(String)
++ {static} int getInt(String)
+}
+
+
+class controller.BrushController {
+- BrushPane pane
+- Paintable pencil
+- Paintable fountain
+- Paintable marker
+- Paintable spray
+- Paintable highlightA
+- Paintable highlightB
+- Paintable highlightC
+- Paintable eraser
+- Paintable activeBrush
+- Node currentBrushNode
+- void attach(Node,Paintable)
+- void selectBrush(Paintable,Node)
+- void animateSelect(Node)
+- void animateBack(Node)
++ Paintable getActiveBrush()
+- String getBrushName(Paintable)
++ void rebindIcons()
+}
+
+
+class controller.MenuController {
+- MenuPane view
+- CanvasPane canvasPane
+- CanvasData canvasData
+- Stage stage
+- void attachHandlers()
+- void setupDragWindow()
+- void setupNewCanvas()
+- void setupExportGIF()
+- void setupThemeMenu()
+- void setupExit()
+}
+
+
+@enduml

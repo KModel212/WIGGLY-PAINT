@@ -220,7 +220,7 @@ public class CanvasController {
         int size = pane.getInternalSize();
 
         gc.clearRect(0, 0, size, size);
-        gc.setFill(Color.BLACK);
+        gc.setFill(ThemeManager.get().fg);
 
         int cx = (int) x;
         int cy = (int) y;

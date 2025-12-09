@@ -1,0 +1,267 @@
+@startuml
+class utils.gif.GifSequenceWriter {
+- ImageWriter writer
+- ImageWriteParam params
+- IIOMetadata metadata
++ void writeFrame(BufferedImage)
++ void close()
+}
+
+
+class gui.BrushPane {
+- Image pencilSrc
+- Image fountainSrc
+- Image highlightASrc
+- Image highlightBSrc
+- Image highlightCSrc
+- Image markerSrc
+- Image spraySrc
+- Image eraserSrc
++ ImageView pencilIcon
++ ImageView fountainIcon
++ ImageView highlightAIcon
++ ImageView highlightBIcon
++ ImageView highlightCIcon
++ ImageView markerIcon
++ ImageView sprayIcon
++ ImageView eraserIcon
+- Runnable onThemeRefreshed
+- ImageView makeIcon(Image)
++ List<ImageView> getAllIcons()
++ void setOnThemeRefreshed(Runnable)
++ ImageView getIconFor(String)
++ void refreshTheme()
+}
+
+
+class brush.EraserBrush {
+# void stamp(CanvasData,double,double,int,int,int)
++ void resetStroke()
+}
+
+class brush.HighlightBrush {
+# void stamp(CanvasData,double,double,int,int,int)
++ void paintOnEveryLayer(CanvasData,double,double,double)
+}
+
+class brush.SprayBrush {
+# void stamp(CanvasData,double,double,int,int,int)
+}
+
+class gui.CanvasPane {
+- {static} int internalSize
+- {static} int displaySize
++ Canvas layer0
++ Canvas layer1
++ Canvas layer2
++ Canvas layer3
+- StackPane layerPane
+- void redrawBackground()
++ double toInternalX(double)
++ double toInternalY(double)
++ int getInternalSize()
++ int getDisplaySize()
++ int getCanvasSize()
++ Canvas getCursorLayer()
++ void clearCursor()
+}
+
+
+class utils.config.Config {
+- {static} Properties props
+- {static} void load(String)
++ {static} String getString(String)
++ {static} double getDouble(String)
++ {static} int getInt(String)
+}
+
+
+class application.Main {
++ void start(Stage)
++ {static} void main(String[])
+}
+
+class brush.PencilBrush {
+# void stamp(CanvasData,double,double,int,int,int)
++ void paintOnEveryLayer(CanvasData,double,double,double)
+}
+
+class brush.FountainBrush {
+# void stamp(CanvasData,double,double,int,int,int)
++ void paintOnEveryLayer(CanvasData,double,double,double)
+}
+
+class gui.MenuPane {
++ HBox menuBar
++ Label btnUmm
++ Label btnNewCanvas
++ Label btnExportGIF
++ Label btnTheme
++ Label btnExit
++ ContextMenu themeMenu
+- Line bottomLine
+- Font font
+- Label createBtn(String)
+# void layoutChildren()
+}
+
+
+abstract class brush.AbstractSpray {
+# Random random
+# void sprayCircle(CanvasData,double,double,int,int,int,int)
+}
+
+
+class render.ImageThemeRender {
+- {static} Color[] SRC_COLORS
+- {static} Color[] getThemeColors()
++ {static} Image recolor(Image)
+- {static} int closestColorIndex(Color)
+- {static} double colorDistance(Color,Color)
+}
+
+
+class controller.CanvasController {
+- CanvasPane pane
+- CanvasData data
+- BrushController brushController
+- double lastX
+- long lastTime
+- boolean drawing
+- long lastDrawTime
+- {static} long DRAG_DELAY_NS
+- {static} double MIN_DISTANCE
+- int wiggleFrame
+- void attachEvents()
++ void redraw(int)
+- void drawCursorCircle(double,double,int)
++ void startWiggleLoop()
+}
+
+
+class utils.themes.ThemeManager {
+- {static} Theme currentTheme
+- {static} List<Runnable> listeners
++ {static} Theme get()
++ {static} void setTheme(String)
++ {static} void addListener(Runnable)
+}
+
+
+abstract class brush.AbstractBrush {
+# int baseSize
+# double speedScale
+# int frame
+# int colorIndex
+# double lastX
+# double lastY
+# Random random
+# {abstract}void stamp(CanvasData,double,double,int,int,int)
+# void stampLine(CanvasData,double,double,double,double,int,int,int)
+# boolean shape(int,int,int)
+# int computeSize(double)
++ void resetStroke()
++ void paintOnEveryLayer(CanvasData,double,double,double)
++ int getBaseSize()
++ int getColorIndex()
+}
+
+
+class utils.themes.Theme {
++ String name
++ Color bg
++ Color fg
++ Color primary
++ Color secondary
++ Color accent
+- Color loadColor(String)
+}
+
+
+interface brush.Paintable {
+~ void paintOnEveryLayer(CanvasData,double,double,double)
+~ void resetStroke()
+}
+
+class controller.BrushController {
+- BrushPane pane
+- Paintable pencil
+- Paintable fountain
+- Paintable marker
+- Paintable spray
+- Paintable highlightA
+- Paintable highlightB
+- Paintable highlightC
+- Paintable eraser
+- Paintable activeBrush
+- Node currentBrushNode
+- void attach(Node,Paintable)
+- void selectBrush(Paintable,Node)
+- void animateSelect(Node)
+- void animateBack(Node)
++ Paintable getActiveBrush()
+- String getBrushName(Paintable)
++ void rebindIcons()
+}
+
+
+class controller.MenuController {
+- MenuPane view
+- CanvasPane canvasPane
+- CanvasData canvasData
+- Stage stage
+- void attachHandlers()
+- void setupDragWindow()
+- void setupNewCanvas()
+- void setupExportGIF()
+- void setupThemeMenu()
+- void setupExit()
+}
+
+
+class render.BackgroundRender {
+- {static} Background currentBackground
+- {static} int lastSpacing
+- {static} double lastRadius
+- {static} void refreshTheme()
++ {static} Background dotBackgroundFromConfig()
++ {static} Background dotBackground(int,double,Color,Color)
+- {static} Image createDotTile(int,double,Color,Color)
+}
+
+
+class canvas.CanvasData {
++ {static} byte BG
++ {static} byte FG
++ {static} byte PRIMARY
++ {static} byte SECONDARY
++ {static} byte ACCENT
+- {static} int SIZE
+- byte[][] pixels
++ byte[][] wiggleFrameA
++ byte[][] wiggleFrameB
+- void initWiggleFrames(byte)
++ int getSize()
++ byte[][] raw()
++ byte[][] A()
++ byte[][] B()
++ void set(int,int,int,byte)
++ void clearAll(byte)
++ BufferedImage toBufferedImage(byte[][])
+}
+
+
+
+
+javafx.scene.layout.VBox <|-- gui.BrushPane
+brush.AbstractBrush <|-- brush.EraserBrush
+brush.AbstractBrush <|-- brush.HighlightBrush
+brush.AbstractSpray <|-- brush.SprayBrush
+javafx.scene.layout.Pane <|-- gui.CanvasPane
+javafx.application.Application <|-- application.Main
+brush.AbstractBrush <|-- brush.PencilBrush
+brush.AbstractBrush <|-- brush.FountainBrush
+gui.Pane <|-- gui.MenuPane
+brush.AbstractBrush <|-- brush.AbstractSpray
+brush.Paintable <|.. brush.AbstractBrush
+@enduml

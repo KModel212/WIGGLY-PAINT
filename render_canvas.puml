@@ -1,0 +1,43 @@
+@startuml
+class render.ImageThemeRender {
+- {static} Color[] SRC_COLORS
+- {static} Color[] getThemeColors()
++ {static} Image recolor(Image)
+- {static} int closestColorIndex(Color)
+- {static} double colorDistance(Color,Color)
+}
+
+
+class render.BackgroundRender {
+- {static} Background currentBackground
+- {static} int lastSpacing
+- {static} double lastRadius
+- {static} void refreshTheme()
++ {static} Background dotBackgroundFromConfig()
++ {static} Background dotBackground(int,double,Color,Color)
+- {static} Image createDotTile(int,double,Color,Color)
+}
+
+
+class canvas.CanvasData {
++ {static} byte BG
++ {static} byte FG
++ {static} byte PRIMARY
++ {static} byte SECONDARY
++ {static} byte ACCENT
+- {static} int SIZE
+- byte[][] pixels
++ byte[][] wiggleFrameA
++ byte[][] wiggleFrameB
+- void initWiggleFrames(byte)
++ int getSize()
++ byte[][] raw()
++ byte[][] A()
++ byte[][] B()
++ void set(int,int,int,byte)
++ void clearAll(byte)
++ BufferedImage toBufferedImage(byte[][])
+}
+
+
+@enduml

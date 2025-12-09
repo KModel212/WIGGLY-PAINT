@@ -6,24 +6,32 @@ import javafx.scene.paint.Color;
 import utils.themes.ThemeManager;
 
 /**
- * Recolor pixel-art icons by mapping specific source colors
- * to theme colors:
+ * Recolor pixel-art icons by mapping colors to the nearest of:
  *
  *  #000000 → FG
  *  #FFFFFF → BG
  *  #FF0097 → PRIMARY
  *  #0097FF → SECONDARY
  *  #FFFF00 → ACCENT
- *
- * Supports transparency and preserves crisp edges.
  */
 public class ImageThemeRender {
 
-    private static final Color SRC_BLACK    = Color.web("#FFFFFF");
-    private static final Color SRC_WHITE    = Color.web("#000000");
-    private static final Color SRC_PRIMARY  = Color.web("#FF0097");
-    private static final Color SRC_SECOND   = Color.web("#0097FF");
-    private static final Color SRC_ACCENT   = Color.web("#FFFF00");
+    // fixed palette (source colors)
+    private static final Color[] SRC_COLORS = {
+            Color.web("#000000"), // BLACK → FG
+            Color.web("#FFFFFF"), // WHITE → BG
+            Color.web("#FF0097"), // PRIMARY
+            Color.web("#0097FF"), // SECONDARY
+            Color.web("#FFFF00")  // ACCENT
+    };
+
+    private static final Color[] THEME_COLORS = {
+            ThemeManager.get().fg,
+            ThemeManager.get().bg,
+            ThemeManager.get().primary,
+            ThemeManager.get().secondary,
+            ThemeManager.get().accent
+    };
 
     public static Image recolor(Image src) {
         int w = (int) src.getWidth();
@@ -35,44 +43,46 @@ public class ImageThemeRender {
 
         for (int x = 0; x < w; x++) {
             for (int y = 0; y < h; y++) {
+
                 Color c = reader.getColor(x, y);
 
-                // keep transparent pixels
+                // preserve transparency
                 if (c.getOpacity() == 0.0) {
                     writer.setColor(x, y, c);
                     continue;
                 }
 
-                // exact color matching
-                if (equalsColor(c, SRC_BLACK)) {
-                    writer.setColor(x, y, ThemeManager.get().fg);
-                }
-                else if (equalsColor(c, SRC_WHITE)) {
-                    writer.setColor(x, y, ThemeManager.get().bg);
-                }
-                else if (equalsColor(c, SRC_PRIMARY)) {
-                    writer.setColor(x, y, ThemeManager.get().primary);
-                }
-                else if (equalsColor(c, SRC_SECOND)) {
-                    writer.setColor(x, y, ThemeManager.get().secondary);
-                }
-                else if (equalsColor(c, SRC_ACCENT)) {
-                    writer.setColor(x, y, ThemeManager.get().accent);
-                }
-                else {
-                    // if a color doesn't match exactly, keep it as-is
-                    writer.setColor(x, y, c);
-                }
+                // find closest palette color
+                int ci = closestColorIndex(c);
+
+                // recolor using theme mapping
+                writer.setColor(x, y, THEME_COLORS[ci]);
             }
         }
 
         return out;
     }
 
-    // Helper: compare pixel colors exactly (avoid floating errors)
-    private static boolean equalsColor(Color a, Color b) {
-        return (int)(a.getRed()*255)   == (int)(b.getRed()*255) &&
-                (int)(a.getGreen()*255) == (int)(b.getGreen()*255) &&
-                (int)(a.getBlue()*255)  == (int)(b.getBlue()*255);
+    /** Compute closest color using Euclidean RGB distance */
+    private static int closestColorIndex(Color c) {
+        int bestIndex = 0;
+        double bestDist = Double.MAX_VALUE;
+
+        for (int i = 0; i < SRC_COLORS.length; i++) {
+            double d = colorDistance(c, SRC_COLORS[i]);
+            if (d < bestDist) {
+                bestDist = d;
+                bestIndex = i;
+            }
+        }
+        return bestIndex;
+    }
+
+    /** Euclidean RGB distance */
+    private static double colorDistance(Color a, Color b) {
+        double dr = a.getRed()   - b.getRed();
+        double dg = a.getGreen() - b.getGreen();
+        double db = a.getBlue()  - b.getBlue();
+        return dr*dr + dg*dg + db*db; // no sqrt needed
     }
 }

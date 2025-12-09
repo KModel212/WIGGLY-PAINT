@@ -88,4 +88,46 @@ public class BrushController {
     public Paintable getActiveBrush() {
         return activeBrush;
     }
+
+    private String getBrushName(Paintable b) {
+        if (b == pencil) return "pencil";
+        if (b == fountain) return "fountain";
+        if (b == marker) return "marker";
+        if (b == spray) return "spray";
+        if (b == highlightA) return "highlightA";
+        if (b == highlightB) return "highlightB";
+        if (b == highlightC) return "highlightC";
+        if (b == eraser) return "eraser";
+        return "";
+    }
+
+    public void rebindIcons() {
+        // Save previous brush
+        Paintable previous = activeBrush;
+
+        // Remove any lingering animation on old nodes
+        if (currentBrushNode != null) {
+            currentBrushNode.setTranslateX(0);
+            currentBrushNode.setScaleX(1);
+            currentBrushNode.setScaleY(1);
+        }
+
+        // Reattach events on NEW ImageViews
+        attach(pane.pencilIcon,     pencil);
+        attach(pane.fountainIcon,   fountain);
+        attach(pane.markerIcon,     marker);
+        attach(pane.sprayIcon,      spray);
+        attach(pane.highlightAIcon, highlightA);
+        attach(pane.highlightBIcon, highlightB);
+        attach(pane.highlightCIcon, highlightC);
+        attach(pane.eraserIcon,     eraser);
+
+        // Restore selection on the correct new ImageView
+        if (previous != null) {
+            String name = getBrushName(previous);
+            Node newNode = pane.getIconFor(name);
+            selectBrush(previous, newNode);
+        }
+    }
+
 }

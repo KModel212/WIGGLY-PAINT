@@ -8,17 +8,9 @@ import utils.themes.ThemeManager;
 
 public class CanvasPane extends Pane {
 
-    // Internal canvas resolution
     private static final int internalSize = 200;
-
-    // Display canvas size
     private static int displaySize = 500;
 
-    // Layers:
-    // 0 = background
-    // 1 = drawing
-    // 2 = overlay
-    // 3 = mouse input
     public final Canvas layer0 = new Canvas(internalSize, internalSize);
     public final Canvas layer1 = new Canvas(internalSize, internalSize);
     public final Canvas layer2 = new Canvas(internalSize, internalSize);
@@ -26,17 +18,17 @@ public class CanvasPane extends Pane {
 
     private final StackPane layerPane = new StackPane();
 
+
     public CanvasPane() {
-        // Crisp pixel-art rendering
+
+        // crisp pixels
         layer0.getGraphicsContext2D().setImageSmoothing(false);
         layer1.getGraphicsContext2D().setImageSmoothing(false);
         layer2.getGraphicsContext2D().setImageSmoothing(false);
         layer3.getGraphicsContext2D().setImageSmoothing(false);
 
-        // Stack layers in correct order
         layerPane.getChildren().addAll(layer0, layer1, layer2, layer3);
 
-        // Scale to display size
         double scale = displaySize / (double) internalSize;
         layerPane.setScaleX(scale);
         layerPane.setScaleY(scale);
@@ -45,25 +37,35 @@ public class CanvasPane extends Pane {
         setPrefSize(displaySize, displaySize);
         getChildren().add(layerPane);
 
-        // Draw background one time
-        initBackground();
+        // draw first theme background
+        redrawBackground();
+
+        // 🌈 React when theme changes
+        ThemeManager.addListener(this::redrawBackground);
     }
 
-    /** Draw static background on layer0 */
-    private void initBackground() {
-//        var gc = layer0.getGraphicsContext2D();
-//
-//        Color bg = ThemeManager.get().bg;
-//
-//        gc.setFill(bg);
-//        gc.fillRect(0, 0, internalSize, internalSize);
-//
-//        gc.setStroke(Color.BLACK);
-//        gc.setLineWidth(1);
-//        gc.strokeRect(0, 0, internalSize, internalSize);
+
+    // ----------------------------------------------------
+    // THEME HANDLER (called on theme change)
+    // ----------------------------------------------------
+    private void redrawBackground() {
+
+        var gc = layer0.getGraphicsContext2D();
+
+        // background
+        gc.setFill(ThemeManager.get().bg);
+        gc.fillRect(0, 0, internalSize, internalSize);
+
+        // border
+        gc.setStroke(ThemeManager.get().fg);
+        gc.setLineWidth(1);
+        gc.strokeRect(0, 0, internalSize, internalSize);
     }
 
-    // Coordinate conversion (display → internal pixel index)
+
+    // ----------------------------------------------------
+    // COORDINATE CONVERSION
+    // ----------------------------------------------------
     public double toInternalX(double x) {
         return x * internalSize / displaySize;
     }
@@ -76,9 +78,7 @@ public class CanvasPane extends Pane {
     public int getDisplaySize() { return displaySize; }
     public int getCanvasSize() { return internalSize; }
 
-    public Canvas getCursorLayer() {
-        return layer3;
-    }
+    public Canvas getCursorLayer() { return layer3; }
 
     public void clearCursor() {
         layer3.getGraphicsContext2D().clearRect(0, 0, internalSize, internalSize);

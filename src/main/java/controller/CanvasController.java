@@ -38,6 +38,11 @@ public class CanvasController {
         // Pre-render both wiggle frames
         redraw(1);
         redraw(2);
+        ThemeManager.addListener(() -> {
+            // Re-render pixel colors for FG/PRIMARY/SECONDARY/ACCENT
+            redraw(1);
+            redraw(2);
+        });
     }
 
     private void attachEvents() {

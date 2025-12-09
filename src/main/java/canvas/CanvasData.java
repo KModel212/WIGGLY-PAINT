@@ -1,7 +1,10 @@
 package canvas;
 
 import gui.CanvasPane;
+import javafx.scene.paint.Color;
 import utils.themes.ThemeManager;
+
+import java.awt.image.BufferedImage;
 
 public class CanvasData {
 
@@ -70,18 +73,30 @@ public class CanvasData {
     }
 
 
-//    // READ pixel
-//    public byte get(int x, int y) {
-//        if (x < 0 || y < 0 || x >= SIZE || y >= SIZE) return BG;
-//        return pixels[x][y];
-//    }
-//
-//    // CLEAR screen
-//    public void clear() {
-//        for (int i = 0; i < SIZE; i++) {
-//            for (int j = 0; j < SIZE; j++) {
-//                pixels[i][j] = BG;
-//            }
-//        }
-//    }
+    public BufferedImage toBufferedImage(byte[][] frame) {
+        BufferedImage img = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_ARGB);
+
+        for (int x = 0; x < SIZE; x++) {
+            for (int y = 0; y < SIZE; y++) {
+                byte idx = frame[x][y];
+                Color c = switch (idx) {
+                    case FG -> ThemeManager.get().fg;
+                    case PRIMARY -> ThemeManager.get().primary;
+                    case SECONDARY -> ThemeManager.get().secondary;
+                    case ACCENT -> ThemeManager.get().accent;
+                    default -> ThemeManager.get().bg;
+                };
+
+                int argb =
+                        ((int)(c.getOpacity()*255) << 24) |
+                                ((int)(c.getRed()*255) << 16) |
+                                ((int)(c.getGreen()*255) << 8) |
+                                (int)(c.getBlue()*255);
+
+                img.setRGB(x, y, argb);
+            }
+        }
+        return img;
+    }
+
 }

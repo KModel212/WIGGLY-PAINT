@@ -4,7 +4,6 @@ import javafx.scene.paint.Color;
 import utils.config.Config;
 
 public class Theme {
-    // Black White Pink Blue Yellow
 
     public final String name;
 

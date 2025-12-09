@@ -1,78 +1,60 @@
 package application;
 
-import controller.BrushController;
-import gui.BrushPane;
-import canvas.CanvasData;
-import controller.CanvasController;
-import gui.CanvasPane;
-import gui.MenuPane;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import javafx.stage.StageStyle;
+
 import render.BackgroundRender;
 import utils.config.Config;
+import utils.themes.ThemeManager;
+import controller.BrushController;
+import controller.MenuController;
+import controller.CanvasController;
+import canvas.CanvasData;
+import gui.BrushPane;
+import gui.CanvasPane;
+import gui.MenuPane;
 
 
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        Font.loadFont(getClass().getResourceAsStream("/fonts/pixel_operator/PixelOperator.ttf"), 14);
 
         BorderPane root = new BorderPane();
         root.setPrefWidth(Config.getInt("application.default_width"));
         root.setPrefHeight(Config.getInt("application.default_height"));
         root.setBackground(BackgroundRender.dotBackgroundFromConfig());
+        ThemeManager.addListener(() -> {
+            root.setBackground(BackgroundRender.dotBackgroundFromConfig());
+        });
 
-        //add MenuPane to top - hbox
-
-
-        //add CanvasPane to left - stackpane 500 * 500
         CanvasPane canvasPane = new CanvasPane();
-        canvasPane.setPrefWidth(500);
-        canvasPane.setPrefHeight(500);
+        CanvasData canvasData = new CanvasData();
         root.setCenter(canvasPane);
         BorderPane.setMargin(canvasPane, new Insets(20));
 
-        CanvasData data = new CanvasData();
-        // ===============================
-        // ✅ ส่ง CanvasPane เข้า MenuPane
-        // ===============================
-        MenuPane menuPane = new MenuPane(canvasPane, data);
-        // === MAKE MENUBAR DRAGGABLE ===
-        final double[] offsetX = new double[1];
-        final double[] offsetY = new double[1];
 
-        menuPane.setOnMousePressed(event -> {
-            offsetX[0] = event.getSceneX();
-            offsetY[0] = event.getSceneY();
-        });
 
-        menuPane.setOnMouseDragged(event -> {
-            primaryStage.setX(event.getScreenX() - offsetX[0]);
-            primaryStage.setY(event.getScreenY() - offsetY[0]);
-        });
+        MenuPane menuPane = new MenuPane();
+        new MenuController(menuPane, canvasPane, canvasData, primaryStage);
 
-        // ===============================
-        // ส่วนอื่น ๆ ตามเดิม
-        // ===============================
+
         BrushPane brushPane = new BrushPane();
-
         BrushController brushController = new BrushController(brushPane);
-        CanvasController canvasController = new CanvasController(canvasPane, data ,brushController);
+        brushPane.setOnThemeRefreshed(brushController::rebindIcons);
+
+        CanvasController canvasController = new CanvasController(canvasPane, canvasData ,brushController);
+        canvasController.startWiggleLoop();
 
         root.setRight(brushPane);
         root.setTop(menuPane);
 
-        canvasController.startWiggleLoop();
 
         Scene scene = new Scene(
                 root,

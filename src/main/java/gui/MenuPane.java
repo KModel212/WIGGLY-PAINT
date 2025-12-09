@@ -101,7 +101,7 @@ public class MenuPane extends Pane {
                     canvasPane.getInternalSize(),
                     canvasPane.getInternalSize());
 
-            canvasPane.layer0.getGraphicsContext2D().setStroke(Color.BLACK);
+            canvasPane.layer0.getGraphicsContext2D().setStroke(ThemeManager.get().fg);
             canvasPane.layer0.getGraphicsContext2D().setLineWidth(1);
             canvasPane.layer0.getGraphicsContext2D().strokeRect(
                     0, 0,

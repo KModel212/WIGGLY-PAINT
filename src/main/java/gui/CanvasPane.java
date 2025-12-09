@@ -24,8 +24,6 @@ public class CanvasPane extends Pane {
     public final Canvas layer2 = new Canvas(internalSize, internalSize);
     public final Canvas layer3 = new Canvas(internalSize, internalSize);
 
-
-
     private final StackPane layerPane = new StackPane();
 
     public CanvasPane() {
@@ -77,4 +75,12 @@ public class CanvasPane extends Pane {
     public int getInternalSize() { return internalSize; }
     public int getDisplaySize() { return displaySize; }
     public int getCanvasSize() { return internalSize; }
+
+    public Canvas getCursorLayer() {
+        return layer3;
+    }
+
+    public void clearCursor() {
+        layer3.getGraphicsContext2D().clearRect(0, 0, internalSize, internalSize);
+    }
 }

@@ -1,5 +1,6 @@
 package controller;
 
+import brush.EraserBrush;
 import brush.Paintable;
 import canvas.CanvasData;
 import gui.CanvasPane;
@@ -73,6 +74,15 @@ public class CanvasController {
 
             if (!drawing) return;
 
+            double ix = e.getX();
+            double iy = e.getY();
+
+            Paintable tool = brushController.getActiveBrush();
+
+            if (tool instanceof EraserBrush eraser) {
+                drawCursorCircle(ix, iy, eraser.getBaseSize());   // <— FIX
+            }
+
             long now = System.nanoTime();
 
             if (now - lastDrawTime < DRAG_DELAY_NS) return;
@@ -89,7 +99,6 @@ public class CanvasController {
             double dt = (now - lastTime) / 1e9;
             double speed = Math.sqrt(dx * dx + dy * dy) / dt;
 
-            Paintable tool = brushController.getActiveBrush();   // ★ updated
             if (tool != null) {
                 tool.paintOnEveryLayer(data, x, y, speed);
             }
@@ -102,11 +111,25 @@ public class CanvasController {
             redraw(2);
         });
 
-
-        // =======================
-        // Mouse Release
-        // =======================
         pane.layer3.setOnMouseReleased(e -> drawing = false);
+
+        pane.layer3.setOnMouseMoved(e -> {
+            double ix = e.getX();
+            double iy = e.getY();
+
+            Paintable tool = brushController.getActiveBrush();
+
+            if (tool instanceof EraserBrush eraser) {
+                drawCursorCircle(ix, iy, eraser.getBaseSize());
+            } else {
+                pane.clearCursor();
+            }
+        });
+
+        pane.layer3.setOnMouseExited(e -> {
+            pane.clearCursor();
+        });
+
     }
 
 
@@ -120,28 +143,35 @@ public class CanvasController {
             case 1 -> pane.layer1;
             case 2 -> pane.layer2;
             case 3 -> pane.layer3;
-            default -> throw new IllegalArgumentException("Invalid layer index: " + layerIndex);
+            default -> throw new IllegalArgumentException("Invalid layer index");
         };
 
         GraphicsContext gc = layer.getGraphicsContext2D();
+        int size = pane.getInternalSize();
+
+        // -----------------------------
+        // LAYER 3 MUST BE transparent!
+        // -----------------------------
+        if (layerIndex == 3) {
+            gc.clearRect(0, 0, size, size);  // transparent
+            return;                          // NO BORDER, NO PIXELS
+        }
+        // -----------------------------
 
         byte[][] pixels = switch (layerIndex) {
             case 0 -> data.raw();
             case 1 -> data.A();
             case 2 -> data.B();
-            case 3 -> data.raw();
-            default -> data.raw();
+            default -> null;
         };
 
-        int size = pane.getInternalSize();
+        if (pixels == null) return;
 
         gc.clearRect(0, 0, size, size);
 
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
-
                 int idx = pixels[x][y];
-
                 gc.setFill(
                         switch (idx) {
                             case CanvasData.FG -> ThemeManager.get().fg;
@@ -151,16 +181,47 @@ public class CanvasController {
                             default -> ThemeManager.get().bg;
                         }
                 );
-
                 gc.fillRect(x, y, 1, 1);
             }
         }
 
-        // border
-        gc.setStroke(Color.BLACK);
+        // Border for base layers
+        gc.setStroke(ThemeManager.get().fg);
         gc.setLineWidth(1);
         gc.strokeRect(0, 0, size, size);
     }
+
+
+    private void drawCursorCircle(double x, double y, int radius) {
+        var gc = pane.getCursorLayer().getGraphicsContext2D();
+        int size = pane.getInternalSize();
+
+        // clear previous cursor
+        gc.clearRect(0, 0, size, size);
+
+        // pixel color
+        gc.setFill(Color.BLACK);
+
+        int cx = (int) x;
+        int cy = (int) y;
+
+        // rasterized circle (outline only)
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+
+                int distSq = dx*dx + dy*dy;
+
+                // check if pixel is near the circle boundary
+                if (Math.abs(distSq - radius*radius) < radius * 1.5) {
+                    int px = cx + dx;
+                    int py = cy + dy;
+
+                    gc.fillRect(px, py, 1, 1); // draw pixel
+                }
+            }
+        }
+    }
+
 
 
     // ==========================

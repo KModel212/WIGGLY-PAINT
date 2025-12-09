@@ -2,7 +2,7 @@ package utils.themes;
 
 public class ThemeManager {
 
-    private static Theme currentTheme = new Theme("classic");
+    private static Theme currentTheme = new Theme("pastel");
 
 
     public static void setTheme(String name) {

@@ -121,4 +121,11 @@ public abstract class AbstractBrush implements Paintable {
         lastY = y;
     }
 
+    public int getBaseSize() {
+        return baseSize;
+    }
+
+    public int getColorIndex() {
+        return colorIndex;
+    }
 }

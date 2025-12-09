@@ -14,12 +14,12 @@ public class BrushController {
     // Brush objects
     private final Paintable pencil      = new PencilBrush(1);
     private final Paintable fountain    = new FountainBrush(5 , 0.6);
-    private final Paintable marker      = new PencilBrush(5);
-    private final Paintable spray       = new SprayBrush(10,0);
+    private final Paintable marker      = new PencilBrush(3);
+    private final Paintable spray       = new SprayBrush(6,0);
     private final Paintable highlightA  = new HighlightBrush(5,2,0);
     private final Paintable highlightB  = new HighlightBrush(5,3,0);
     private final Paintable highlightC  = new HighlightBrush(5,4,0);
-//    private final Brushable eraser      = new EraserPen(50,5);
+    private final Paintable eraser      = new EraserBrush(10);
 
     private Paintable activeBrush = null;
     private Node currentBrushNode = null;
@@ -35,7 +35,7 @@ public class BrushController {
         attach(pane.highlightAIcon, highlightA);
         attach(pane.highlightBIcon, highlightB);
         attach(pane.highlightCIcon, highlightC);
-//        attach(pane.eraserIcon,     eraser);
+        attach(pane.eraserIcon,     eraser);
 
         selectBrush(pencil, pane.pencilIcon);
     }

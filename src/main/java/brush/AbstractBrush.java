@@ -129,7 +129,8 @@ public abstract class AbstractBrush implements Paintable {
     // Size computation — reduce size when moving fast
     // ============================================================
     protected int computeSize(double speed) {
-        double scaled = baseSize - speedScale * Math.log1p(speed);
+        double shallow = Math.log1p(speed * 0.5); // slow growth
+        double scaled = baseSize - speedScale * shallow;
         return Math.max(1, (int) Math.round(scaled));
     }
 

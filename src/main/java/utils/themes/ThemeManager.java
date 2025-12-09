@@ -8,7 +8,7 @@ public class ThemeManager {
     // ============================================================
     // Current theme (default = pastel)
     // ============================================================
-    private static Theme currentTheme = new Theme("pastel");
+    private static Theme currentTheme = new Theme("classic");
 
     // UI listeners that update when theme changes
     private static final List<Runnable> listeners = new ArrayList<>();

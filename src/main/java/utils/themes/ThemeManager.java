@@ -5,27 +5,29 @@ import java.util.List;
 
 public class ThemeManager {
 
-    // -------------------------------------------------
-    // CURRENT THEME (default = classic)
-    // -------------------------------------------------
+    // ============================================================
+    // Current theme (default = pastel)
+    // ============================================================
     private static Theme currentTheme = new Theme("pastel");
 
-    // List of UI listeners that want to update when theme changes
+    // UI listeners that update when theme changes
     private static final List<Runnable> listeners = new ArrayList<>();
 
 
-    // -------------------------------------------------
-    // GET CURRENT THEME
-    // -------------------------------------------------
+    // ============================================================
+    // Get Current Theme
+    // ============================================================
     public static Theme get() {
         return currentTheme;
     }
 
 
-    // -------------------------------------------------
-    // CHANGE THEME (classic, pastel, night, etc.)
-    // -------------------------------------------------
+    // ============================================================
+    // Set Theme (e.g., classic, pastel, night)
+    // Notifies all registered listeners.
+    // ============================================================
     public static void setTheme(String name) {
+
         try {
             currentTheme = new Theme(name);
         } catch (RuntimeException e) {
@@ -33,14 +35,16 @@ public class ThemeManager {
             return;
         }
 
-        // 🔔 Notify all listeners (UI refresh)
-        for (Runnable r : listeners) r.run();
+        // Notify listeners (UI refresh)
+        for (Runnable r : listeners) {
+            r.run();
+        }
     }
 
 
-    // -------------------------------------------------
-    // UI components register here to get updates
-    // -------------------------------------------------
+    // ============================================================
+    // Register a listener to be updated on theme change
+    // ============================================================
     public static void addListener(Runnable uiRefresher) {
         listeners.add(uiRefresher);
     }

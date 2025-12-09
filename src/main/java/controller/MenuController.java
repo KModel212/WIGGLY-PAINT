@@ -7,6 +7,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import utils.gif.GifSequenceWriter;
 import utils.themes.ThemeManager;
+
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
@@ -14,11 +15,18 @@ import java.io.File;
 
 public class MenuController {
 
+    // ============================================================
+    // Fields
+    // ============================================================
     private final MenuPane view;
     private final CanvasPane canvasPane;
     private final CanvasData canvasData;
     private final Stage stage;
 
+
+    // ============================================================
+    // Constructor
+    // ============================================================
     public MenuController(MenuPane view, CanvasPane canvasPane, CanvasData canvasData, Stage stage) {
         this.view = view;
         this.canvasPane = canvasPane;
@@ -29,11 +37,10 @@ public class MenuController {
     }
 
 
-    // ---------------------------------------------------------
-    // Attach all event handlers for MenuPane buttons + theme
-    // ---------------------------------------------------------
+    // ============================================================
+    // Attach Event Handlers
+    // ============================================================
     private void attachHandlers() {
-
         setupDragWindow();
         setupNewCanvas();
         setupExportGIF();
@@ -42,9 +49,9 @@ public class MenuController {
     }
 
 
-    // ---------------------------------------------------------
-    // 1. WINDOW DRAGGING (DRAG MENU BAR)
-    // ---------------------------------------------------------
+    // ============================================================
+    // 1. WINDOW DRAGGING
+    // ============================================================
     private void setupDragWindow() {
 
         final double[] offsetX = new double[1];
@@ -62,25 +69,27 @@ public class MenuController {
     }
 
 
-    // ---------------------------------------------------------
+    // ============================================================
     // 2. NEW CANVAS
-    // ---------------------------------------------------------
+    // ============================================================
     private void setupNewCanvas() {
+
         view.btnNewCanvas.setOnMouseClicked(e -> {
+
             System.out.println("[Menu] New Canvas");
 
             int size = canvasPane.getCanvasSize();
             int internal = canvasPane.getInternalSize();
 
-            // Clear layers
+            // Clear drawing layers
             canvasPane.layer1.getGraphicsContext2D().clearRect(0, 0, size, size);
             canvasPane.layer2.getGraphicsContext2D().clearRect(0, 0, size, size);
             canvasPane.layer3.getGraphicsContext2D().clearRect(0, 0, size, size);
 
-            // Reset CanvasData
+            // Reset pixel data
             canvasData.clearAll(CanvasData.BG);
 
-            // Redraw background + border
+            // Draw base layer background & border
             var gc = canvasPane.layer0.getGraphicsContext2D();
             gc.setFill(ThemeManager.get().bg);
             gc.fillRect(0, 0, internal, internal);
@@ -92,10 +101,11 @@ public class MenuController {
     }
 
 
-    // ---------------------------------------------------------
-    // 3. LOAD GIF
-    // ---------------------------------------------------------
+    // ============================================================
+    // 3. EXPORT GIF
+    // ============================================================
     private void setupExportGIF() {
+
         view.btnExportGIF.setOnMouseClicked(e -> {
 
             FileChooser chooser = new FileChooser();
@@ -112,8 +122,8 @@ public class MenuController {
                 GifSequenceWriter writer = new GifSequenceWriter(
                         output,
                         BufferedImage.TYPE_INT_ARGB,
-                        100,      // delay in ms (100 = 10 FPS)
-                        true      // loop forever
+                        100,   // delay per frame (100ms = 10FPS)
+                        true   // loop forever
                 );
 
                 // Frame A
@@ -125,7 +135,6 @@ public class MenuController {
                 writer.writeFrame(frameB);
 
                 writer.close();
-
                 System.out.println("[Export] GIF saved OK!");
 
             } catch (Exception ex) {
@@ -136,11 +145,9 @@ public class MenuController {
     }
 
 
-
-
-    // ---------------------------------------------------------
+    // ============================================================
     // 4. THEME SWITCHING
-    // ---------------------------------------------------------
+    // ============================================================
     private void setupThemeMenu() {
 
         // Classic
@@ -152,13 +159,12 @@ public class MenuController {
         view.themeMenu.getItems().get(1).setOnAction(e ->
                 ThemeManager.setTheme("pastel")
         );
-
     }
 
 
-    // ---------------------------------------------------------
-    // 5. EXIT PROGRAM
-    // ---------------------------------------------------------
+    // ============================================================
+    // 5. EXIT
+    // ============================================================
     private void setupExit() {
         view.btnExit.setOnMouseClicked(e -> {
             System.out.println("[Menu] Exit");

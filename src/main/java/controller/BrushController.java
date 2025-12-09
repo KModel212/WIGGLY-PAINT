@@ -9,25 +9,32 @@ import javafx.util.Duration;
 
 public class BrushController {
 
+    // ============================================================
+    // Fields
+    // ============================================================
     private final BrushPane pane;
 
     // Brush objects
     private final Paintable pencil      = new PencilBrush(1);
-    private final Paintable fountain    = new FountainBrush(5 , 0.6);
+    private final Paintable fountain    = new FountainBrush(5, 0.6);
     private final Paintable marker      = new PencilBrush(3);
-    private final Paintable spray       = new SprayBrush(6,0);
-    private final Paintable highlightA  = new HighlightBrush(5,2,0);
-    private final Paintable highlightB  = new HighlightBrush(5,3,0);
-    private final Paintable highlightC  = new HighlightBrush(5,4,0);
+    private final Paintable spray       = new SprayBrush(6, 0);
+    private final Paintable highlightA  = new HighlightBrush(5, 2, 0);
+    private final Paintable highlightB  = new HighlightBrush(5, 3, 0);
+    private final Paintable highlightC  = new HighlightBrush(5, 4, 0);
     private final Paintable eraser      = new EraserBrush(10);
 
     private Paintable activeBrush = null;
     private Node currentBrushNode = null;
 
+
+    // ============================================================
+    // Constructor
+    // ============================================================
     public BrushController(BrushPane pane) {
         this.pane = pane;
 
-        // Attach events
+        // Attach icon → brush mappings
         attach(pane.pencilIcon,     pencil);
         attach(pane.fountainIcon,   fountain);
         attach(pane.markerIcon,     marker);
@@ -37,33 +44,44 @@ public class BrushController {
         attach(pane.highlightCIcon, highlightC);
         attach(pane.eraserIcon,     eraser);
 
+        // Default brush
         selectBrush(pencil, pane.pencilIcon);
     }
 
+
+    // ============================================================
+    // Event attachment helper
+    // ============================================================
     private void attach(Node icon, Paintable brush) {
         icon.setOnMouseClicked(e -> selectBrush(brush, icon));
     }
 
-    // ------------------------------
-    // Brush Selection Animation
-    // ------------------------------
+
+    // ============================================================
+    // Brush selection logic
+    // ============================================================
     private void selectBrush(Paintable brush, Node icon) {
 
         activeBrush = brush;
 
-        // Reset old brush
+        // reset old brush visuals
         if (currentBrushNode != null) {
             animateBack(currentBrushNode);
             currentBrushNode.setEffect(null);
         }
 
-        // Animate new brush
+        // animate new one
         animateSelect(icon);
 
         currentBrushNode = icon;
     }
 
+
+    // ============================================================
+    // Selection animations
+    // ============================================================
     private void animateSelect(Node node) {
+
         TranslateTransition out = new TranslateTransition(Duration.millis(200), node);
         out.setToX(-20);
         out.play();
@@ -75,6 +93,7 @@ public class BrushController {
     }
 
     private void animateBack(Node node) {
+
         TranslateTransition back = new TranslateTransition(Duration.millis(200), node);
         back.setToX(0);
         back.play();
@@ -85,10 +104,18 @@ public class BrushController {
         scaleBack.play();
     }
 
+
+    // ============================================================
+    // Brush getter
+    // ============================================================
     public Paintable getActiveBrush() {
         return activeBrush;
     }
 
+
+    // ============================================================
+    // Utility (brush → string name)
+    // ============================================================
     private String getBrushName(Paintable b) {
         if (b == pencil) return "pencil";
         if (b == fountain) return "fountain";
@@ -101,18 +128,23 @@ public class BrushController {
         return "";
     }
 
+
+    // ============================================================
+    // Rebind icons after theme change
+    // ============================================================
     public void rebindIcons() {
-        // Save previous brush
+
+        // save active brush
         Paintable previous = activeBrush;
 
-        // Remove any lingering animation on old nodes
+        // reset old node animation state
         if (currentBrushNode != null) {
             currentBrushNode.setTranslateX(0);
             currentBrushNode.setScaleX(1);
             currentBrushNode.setScaleY(1);
         }
 
-        // Reattach events on NEW ImageViews
+        // reattach events to new ImageViews
         attach(pane.pencilIcon,     pencil);
         attach(pane.fountainIcon,   fountain);
         attach(pane.markerIcon,     marker);
@@ -122,12 +154,11 @@ public class BrushController {
         attach(pane.highlightCIcon, highlightC);
         attach(pane.eraserIcon,     eraser);
 
-        // Restore selection on the correct new ImageView
+        // restore highlight on selected brush icon
         if (previous != null) {
             String name = getBrushName(previous);
             Node newNode = pane.getIconFor(name);
             selectBrush(previous, newNode);
         }
     }
-
 }

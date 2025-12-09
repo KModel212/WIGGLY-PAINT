@@ -14,30 +14,36 @@ import utils.themes.ThemeManager;
 
 public class BackgroundRender {
 
-    private static Background currentBackground;   // cached
+    // ============================================================
+    // Cached background
+    // ============================================================
+    private static Background currentBackground;
     private static int lastSpacing;
     private static double lastRadius;
 
+    // Register theme listener → theme change invalidates cache
     static {
-        // Listen for theme changes → rebuild background tile
         ThemeManager.addListener(BackgroundRender::refreshTheme);
     }
 
-    /** Called when theme changes */
+
+    // ============================================================
+    // Theme refresh callback
+    // ============================================================
     private static void refreshTheme() {
-        // force background regeneration next time someone calls dotBackgroundFromConfig()
-        currentBackground = null;
+        currentBackground = null;  // force regeneration next call
     }
 
-    // ----------------------------------------------------------
-    // PUBLIC ENTRY POINT
-    // ----------------------------------------------------------
+
+    // ============================================================
+    // PUBLIC API — get background from config
+    // ============================================================
     public static Background dotBackgroundFromConfig() {
 
         int spacing = Config.getInt("theme.dot.spacing");
         double radius = Config.getDouble("theme.dot.radius");
 
-        // If background is already up to date → reuse cached
+        // Reuse cached background if still valid
         if (currentBackground != null &&
                 spacing == lastSpacing &&
                 radius == lastRadius)
@@ -45,9 +51,8 @@ public class BackgroundRender {
             return currentBackground;
         }
 
-        // Generate new background
         lastSpacing = spacing;
-        lastRadius = radius;
+        lastRadius  = radius;
 
         Color dotColor = ThemeManager.get().fg;
         Color bgColor  = ThemeManager.get().bg;
@@ -56,18 +61,23 @@ public class BackgroundRender {
         return currentBackground;
     }
 
-    // ----------------------------------------------------------
-    // Generate dot tile
-    // ----------------------------------------------------------
-    public static Background dotBackground(int spacing, double dotRadius, Color dotColor, Color bgColor) {
 
+    // ============================================================
+    // Build repeating dot pattern background
+    // ============================================================
+    public static Background dotBackground(
+            int spacing,
+            double dotRadius,
+            Color dotColor,
+            Color bgColor
+    ) {
         Image tile = createDotTile(spacing, dotRadius, dotColor, bgColor);
 
         ImagePattern pattern = new ImagePattern(
                 tile,
                 0, 0,
                 spacing, spacing,
-                false    // repeat tile
+                false
         );
 
         return new Background(
@@ -75,19 +85,24 @@ public class BackgroundRender {
         );
     }
 
-    // ----------------------------------------------------------
-    // Create tile image
-    // ----------------------------------------------------------
-    private static Image createDotTile(int size, double dotRadius, Color dotColor, Color bgColor) {
 
+    // ============================================================
+    // Create a tile image containing one centered dot
+    // ============================================================
+    private static Image createDotTile(
+            int size,
+            double dotRadius,
+            Color dotColor,
+            Color bgColor
+    ) {
         Canvas tileCanvas = new Canvas(size, size);
         GraphicsContext gc = tileCanvas.getGraphicsContext2D();
 
-        // background
+        // Background
         gc.setFill(bgColor);
         gc.fillRect(0, 0, size, size);
 
-        // dot in center
+        // Dot (center)
         gc.setFill(dotColor);
         gc.fillOval(
                 size / 2.0 - dotRadius,
@@ -96,6 +111,7 @@ public class BackgroundRender {
                 dotRadius * 2
         );
 
+        // Capture tile as image
         WritableImage img = new WritableImage(size, size);
         tileCanvas.snapshot(null, img);
 

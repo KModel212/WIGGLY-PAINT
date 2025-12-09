@@ -5,22 +5,29 @@ import java.util.Random;
 
 public class PencilBrush extends AbstractBrush {
 
-    private final Random random = new Random();
-
+    // ============================================================
+    // Constructor
+    // ============================================================
     public PencilBrush(int baseSize) {
         super(baseSize);
     }
 
+
+    // ============================================================
+    // Stamp — jittery pencil-like circle
+    // ============================================================
     @Override
-    protected void stamp(CanvasData canvas,
-                              double x, double y,
-                              int size, int colorIndex,
-                              int layer) {
+    protected void stamp(
+            CanvasData canvas,
+            double x, double y,
+            int size,
+            int colorIndex,
+            int layer
+    ) {
+        int cx = (int) x;
+        int cy = (int) y;
 
-        int cx = (int)x;
-        int cy = (int)y;
-
-        // jitter for hand-drawn effect
+        // subtle jitter → handmade pencil effect
         cx += (random.nextDouble() - 0.5) * 1.0;
         cy += (random.nextDouble() - 0.5) * 1.0;
 
@@ -29,16 +36,20 @@ public class PencilBrush extends AbstractBrush {
         for (int dx = -r; dx <= r; dx++) {
             for (int dy = -r; dy <= r; dy++) {
 
-                int px = cx + dx;
-                int py = cy + dy;
-
                 if (shape(dx, dy, r)) {
-                    canvas.set(layer, px, py, (byte)colorIndex);
+                    int px = cx + dx;
+                    int py = cy + dy;
+
+                    canvas.set(layer, px, py, (byte) colorIndex);
                 }
             }
         }
     }
 
+
+    // ============================================================
+    // Continuous stroke behavior
+    // ============================================================
     @Override
     public void paintOnEveryLayer(CanvasData canvas, double x, double y, double speed) {
         super.paintOnEveryLayer(canvas, x, y, speed);

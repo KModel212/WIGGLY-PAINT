@@ -12,9 +12,9 @@ import utils.themes.ThemeManager;
 
 public class MenuPane extends Pane {
 
-    // ----------------------------
+    // ============================================================
     // UI ELEMENTS
-    // ----------------------------
+    // ============================================================
     public final HBox menuBar = new HBox(20);
 
     public final Label btnUmm;
@@ -28,60 +28,64 @@ public class MenuPane extends Pane {
     private final Line bottomLine = new Line();
     private final Font font = Font.font("DejaVu Sans Mono", 14);
 
+
+    // ============================================================
+    // Constructor
+    // ============================================================
     public MenuPane() {
 
-        // --------------------------
-        // MENU BAR
-        // --------------------------
+        // ------------------------------------------------------------
+        // Menu Bar
+        // ------------------------------------------------------------
         menuBar.setPadding(new Insets(5, 20, 5, 20));
         menuBar.setBackground(new Background(
                 new BackgroundFill(ThemeManager.get().bg, CornerRadii.EMPTY, Insets.EMPTY)
         ));
 
-        // --------------------------
-        // BOTTOM LINE
-        // --------------------------
+        // ------------------------------------------------------------
+        // Bottom Divider Line
+        // ------------------------------------------------------------
         bottomLine.setStroke(ThemeManager.get().fg);
         bottomLine.setStrokeWidth(1);
 
-        // --------------------------
-        // BUTTONS
-        // --------------------------
+        // ------------------------------------------------------------
+        // Buttons
+        // ------------------------------------------------------------
         btnUmm       = createBtn("Umm");
         btnNewCanvas = createBtn("NewCanvas");
         btnExportGIF = createBtn("ExportGIF");
         btnTheme     = createBtn("Theme");
 
-        // --------------------------
-        // EXIT BUTTON (SQUARE X)
-        // --------------------------
-        btnExit = new Label("☒"); // square X glyph (pixel-style friendly)
+        // ------------------------------------------------------------
+        // Exit Button (square X)
+        // ------------------------------------------------------------
+        btnExit = new Label("☒");
         btnExit.setFont(font);
         btnExit.setTextFill(ThemeManager.get().fg);
         btnExit.setPadding(new Insets(0));
-        btnExit.setPrefSize(20, 20);  // square button
+        btnExit.setPrefSize(20, 20);
         btnExit.setMinSize(20, 20);
         btnExit.setMaxSize(20, 20);
         btnExit.setStyle("-fx-alignment: center;");
 
-        // --------------------------
-        // ADD BUTTONS WITH SPACER
-        // --------------------------
+        // ------------------------------------------------------------
+        // Layout + Spacer
+        // ------------------------------------------------------------
         Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);  // push exit to right
+        HBox.setHgrow(spacer, Priority.ALWAYS);
 
         menuBar.getChildren().addAll(
                 btnUmm,
                 btnNewCanvas,
                 btnExportGIF,
                 btnTheme,
-                spacer,      // <-- pushes exit to the right
-                btnExit      // right side
+                spacer,
+                btnExit
         );
 
-        // --------------------------
-        // THEME MENU
-        // --------------------------
+        // ------------------------------------------------------------
+        // Theme Menu (ContextMenu)
+        // ------------------------------------------------------------
         MenuItem itemClassic = new MenuItem("Classic");
         MenuItem itemPastel  = new MenuItem("Pastel");
 
@@ -91,15 +95,16 @@ public class MenuPane extends Pane {
                 themeMenu.show(btnTheme, e.getScreenX(), e.getScreenY())
         );
 
-        // --------------------------
-        // LAYOUT ROOT
-        // --------------------------
+        // ------------------------------------------------------------
+        // Add to root
+        // ------------------------------------------------------------
         getChildren().addAll(menuBar, bottomLine);
 
-        // --------------------------
-        // THEME UPDATES
-        // --------------------------
+        // ------------------------------------------------------------
+        // Theme Updates
+        // ------------------------------------------------------------
         ThemeManager.addListener(() -> {
+
             menuBar.setBackground(new Background(
                     new BackgroundFill(ThemeManager.get().bg, CornerRadii.EMPTY, Insets.EMPTY)
             ));
@@ -114,6 +119,10 @@ public class MenuPane extends Pane {
         });
     }
 
+
+    // ============================================================
+    // Helper: Create Menu Button
+    // ============================================================
     private Label createBtn(String text) {
         Label lb = new Label(text);
         lb.setFont(font);
@@ -123,8 +132,13 @@ public class MenuPane extends Pane {
         return lb;
     }
 
+
+    // ============================================================
+    // Layout Children
+    // ============================================================
     @Override
     protected void layoutChildren() {
+
         double w = getWidth();
         double barHeight = menuBar.prefHeight(-1);
 

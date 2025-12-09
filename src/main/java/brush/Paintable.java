@@ -4,16 +4,17 @@ import canvas.CanvasData;
 
 public interface Paintable {
 
-    /**
-     * Called continuously while the mouse/finger is moving.
-     *
-     * @param canvas The pixel canvas buffer
-     * @param x      current pointer X
-     * @param y      current pointer Y
-     * @param speed  motion speed since last event
-     */
+    // ============================================================
+    // Paint event
+    // ------------------------------------------------------------
+    // Called continuously while pointer is moving.
+    // Each brush implements how it applies paint to the canvas.
+    // ============================================================
     void paintOnEveryLayer(CanvasData canvas, double x, double y, double speed);
 
-    void resetStroke();
 
+    // ============================================================
+    // Reset continuous stroke state (for new line)
+    // ============================================================
+    void resetStroke();
 }

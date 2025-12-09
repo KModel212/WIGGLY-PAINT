@@ -43,10 +43,8 @@ public class BrushPane extends VBox {
     // Constructor
     // ============================================================
     public BrushPane() {
-
         super(12);
         this.setAlignment(Pos.CENTER_RIGHT);
-
         // -- Load source icons once (original pixel colors)
         pencilSrc     = new Image(getClass().getResourceAsStream("/brush/pencil.PNG"));
         fountainSrc   = new Image(getClass().getResourceAsStream("/brush/fountain.PNG"));
@@ -56,7 +54,6 @@ public class BrushPane extends VBox {
         markerSrc     = new Image(getClass().getResourceAsStream("/brush/marker.PNG"));
         spraySrc      = new Image(getClass().getResourceAsStream("/brush/spray.PNG"));
         eraserSrc     = new Image(getClass().getResourceAsStream("/brush/eraser.PNG"));
-
         // -- Create themed icons
         pencilIcon     = makeIcon(pencilSrc);
         fountainIcon   = makeIcon(fountainSrc);
@@ -66,7 +63,6 @@ public class BrushPane extends VBox {
         markerIcon     = makeIcon(markerSrc);
         sprayIcon      = makeIcon(spraySrc);
         eraserIcon     = makeIcon(eraserSrc);
-
         // -- Add to layout
         this.getChildren().addAll(
                 pencilIcon,
@@ -78,7 +74,6 @@ public class BrushPane extends VBox {
                 highlightCIcon,
                 eraserIcon
         );
-
         // -- Auto-recolor when theme updates
         ThemeManager.addListener(this::refreshTheme);
     }
@@ -99,7 +94,7 @@ public class BrushPane extends VBox {
     // ============================================================
     // Accessors
     // ============================================================
-    public List<ImageView> getAllIcons() {
+    private List<ImageView> getAllIcons() {
         return List.of(
                 pencilIcon,
                 fountainIcon,
@@ -111,11 +106,9 @@ public class BrushPane extends VBox {
                 eraserIcon
         );
     }
-
     public void setOnThemeRefreshed(Runnable callback) {
         this.onThemeRefreshed = callback;
     }
-
     public ImageView getIconFor(String name) {
         return switch (name) {
             case "pencil"      -> pencilIcon;
@@ -129,13 +122,10 @@ public class BrushPane extends VBox {
             default            -> null;
         };
     }
-
-
     // ============================================================
     // Theme Refresh — rebuild icons from original sources
     // ============================================================
     public void refreshTheme() {
-
         // rebuild recolored icons
         pencilIcon     = makeIcon(pencilSrc);
         fountainIcon   = makeIcon(fountainSrc);
@@ -145,7 +135,6 @@ public class BrushPane extends VBox {
         markerIcon     = makeIcon(markerSrc);
         sprayIcon      = makeIcon(spraySrc);
         eraserIcon     = makeIcon(eraserSrc);
-
         // rebuild VBox layout
         this.getChildren().setAll(
                 pencilIcon,
@@ -157,7 +146,6 @@ public class BrushPane extends VBox {
                 highlightCIcon,
                 eraserIcon
         );
-
         // notify BrushController
         if (onThemeRefreshed != null) {
             onThemeRefreshed.run();

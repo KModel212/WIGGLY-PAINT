@@ -27,14 +27,12 @@ public class ThemeManager {
     // Notifies all registered listeners.
     // ============================================================
     public static void setTheme(String name) {
-
         try {
             currentTheme = new Theme(name);
         } catch (RuntimeException e) {
             System.err.println("[ThemeManager] Missing theme config for: " + name);
             return;
         }
-
         // Notify listeners (UI refresh)
         for (Runnable r : listeners) {
             r.run();

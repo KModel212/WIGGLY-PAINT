@@ -25,7 +25,6 @@ public class CanvasPane extends Pane {
     public final Canvas layer1 = new Canvas(internalSize, internalSize);
     public final Canvas layer2 = new Canvas(internalSize, internalSize);
     public final Canvas layer3 = new Canvas(internalSize, internalSize);
-
     private final StackPane layerPane = new StackPane();
 
 
@@ -42,13 +41,11 @@ public class CanvasPane extends Pane {
 
         // Stack layers from bottom to top
         layerPane.getChildren().addAll(layer0, layer1, layer2, layer3);
-
         // Scaling from internal pixel size → display pixel size
         double scale = displaySize / (double) internalSize;
         layerPane.setScaleX(scale);
         layerPane.setScaleY(scale);
         layerPane.setPrefSize(displaySize, displaySize);
-
         // Add container
         setPrefSize(displaySize, displaySize);
         getChildren().add(layerPane);

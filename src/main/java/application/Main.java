@@ -64,19 +64,13 @@ public class Main extends Application {
         // ============================================================
         BrushPane brushPane = new BrushPane();
         BrushController brushController = new BrushController(brushPane);
-
-        // when theme changes → recolor icons
         brushPane.setOnThemeRefreshed(brushController::rebindIcons);
 
 
         // ============================================================
         // CANVAS CONTROLLER + WIGGLE LOOP
         // ============================================================
-        CanvasController canvasController = new CanvasController(
-                canvasPane,
-                canvasData,
-                brushController
-        );
+        CanvasController canvasController = new CanvasController(canvasPane, canvasData, brushController);
         canvasController.startWiggleLoop();
 
 

@@ -36,14 +36,11 @@ public class Theme {
     // Helper: retrieve one color from config
     // ============================================================
     private Color loadColor(String key) {
-
         String fullKey = name + "." + key;
         String hex = Config.getString(fullKey);
-
         if (hex == null) {
             throw new RuntimeException("Missing theme key: " + fullKey);
         }
-
         return Color.web(hex);
     }
 }

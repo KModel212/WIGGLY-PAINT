@@ -12,7 +12,6 @@ public abstract class AbstractBrush implements Paintable {
     // ============================================================
     protected int baseSize;
     protected double speedScale;
-    protected int frame;
     protected int colorIndex;
 
     // last stroke point (used for stampLine)
@@ -66,13 +65,11 @@ public abstract class AbstractBrush implements Paintable {
             int size, int colorIndex,
             int layer
     ) {
-
         // First point: draw only one
         if (Double.isNaN(x0) || Double.isNaN(y0)) {
             stamp(canvas, x1, y1, size, colorIndex, layer);
             return;
         }
-
         double dx = x1 - x0;
         double dy = y1 - y0;
         double dist = Math.sqrt(dx * dx + dy * dy);
@@ -96,31 +93,24 @@ public abstract class AbstractBrush implements Paintable {
     // SHAPE LOGIC — chooses a random brush dab shape
     // ============================================================
     protected boolean shape(int dx, int dy, int r) {
-
         Random random = new Random();
         int rdm = random.nextInt(4);
-
         switch (rdm) {
-
             case 0: // perfect circle
                 return dx * dx + dy * dy <= r * r;
-
             case 1: { // wobbly circle
                 double jitter = (random.nextDouble() - 0.5) * 0.6;
                 double rr = (r + jitter) * (r + jitter);
                 return dx * dx + dy * dy <= rr;
             }
-
             case 2: // halftone circle
                 return ((dx + dy) & 1) == 0 && dx * dx + dy * dy <= r * r;
-
             case 3: { // ellipse (calligraphy effect)
                 double a = r * 1.3;
                 double b = r * 0.8;
                 return (dx * dx) / (a * a) + (dy * dy) / (b * b) <= 1.0;
             }
         }
-
         return false;
     }
 
@@ -149,14 +139,11 @@ public abstract class AbstractBrush implements Paintable {
     // ============================================================
     @Override
     public void paintOnEveryLayer(CanvasData canvas, double x, double y, double speed) {
-
         int size = computeSize(speed);
         int totalLayers = 2;
-
         for (int layer = 1; layer <= totalLayers; layer++) {
             stampLine(canvas, lastX, lastY, x, y, size, colorIndex, layer);
         }
-
         lastX = x;
         lastY = y;
     }

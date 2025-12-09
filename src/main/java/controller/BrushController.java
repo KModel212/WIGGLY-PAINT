@@ -33,7 +33,6 @@ public class BrushController {
     // ============================================================
     public BrushController(BrushPane pane) {
         this.pane = pane;
-
         // Attach icon → brush mappings
         attach(pane.pencilIcon,     pencil);
         attach(pane.fountainIcon,   fountain);
@@ -43,7 +42,6 @@ public class BrushController {
         attach(pane.highlightBIcon, highlightB);
         attach(pane.highlightCIcon, highlightC);
         attach(pane.eraserIcon,     eraser);
-
         // Default brush
         selectBrush(pencil, pane.pencilIcon);
     }
@@ -61,18 +59,14 @@ public class BrushController {
     // Brush selection logic
     // ============================================================
     private void selectBrush(Paintable brush, Node icon) {
-
         activeBrush = brush;
-
         // reset old brush visuals
         if (currentBrushNode != null) {
             animateBack(currentBrushNode);
             currentBrushNode.setEffect(null);
         }
-
         // animate new one
         animateSelect(icon);
-
         currentBrushNode = icon;
     }
 
@@ -81,11 +75,9 @@ public class BrushController {
     // Selection animations
     // ============================================================
     private void animateSelect(Node node) {
-
         TranslateTransition out = new TranslateTransition(Duration.millis(200), node);
         out.setToX(-20);
         out.play();
-
         ScaleTransition scale = new ScaleTransition(Duration.millis(200), node);
         scale.setToX(1.1);
         scale.setToY(1.1);
@@ -93,11 +85,9 @@ public class BrushController {
     }
 
     private void animateBack(Node node) {
-
         TranslateTransition back = new TranslateTransition(Duration.millis(200), node);
         back.setToX(0);
         back.play();
-
         ScaleTransition scaleBack = new ScaleTransition(Duration.millis(200), node);
         scaleBack.setToX(1);
         scaleBack.setToY(1);
@@ -133,17 +123,14 @@ public class BrushController {
     // Rebind icons after theme change
     // ============================================================
     public void rebindIcons() {
-
         // save active brush
         Paintable previous = activeBrush;
-
         // reset old node animation state
         if (currentBrushNode != null) {
             currentBrushNode.setTranslateX(0);
             currentBrushNode.setScaleX(1);
             currentBrushNode.setScaleY(1);
         }
-
         // reattach events to new ImageViews
         attach(pane.pencilIcon,     pencil);
         attach(pane.fountainIcon,   fountain);
@@ -153,7 +140,6 @@ public class BrushController {
         attach(pane.highlightBIcon, highlightB);
         attach(pane.highlightCIcon, highlightC);
         attach(pane.eraserIcon,     eraser);
-
         // restore highlight on selected brush icon
         if (previous != null) {
             String name = getBrushName(previous);

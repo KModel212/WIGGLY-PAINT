@@ -49,7 +49,6 @@ public class ImageThemeRender {
     // Recolor an image using the nearest palette match
     // ============================================================
     public static Image recolor(Image src) {
-
         int w = (int) src.getWidth();
         int h = (int) src.getHeight();
 
@@ -61,20 +60,16 @@ public class ImageThemeRender {
 
         for (int x = 0; x < w; x++) {
             for (int y = 0; y < h; y++) {
-
                 Color c = reader.getColor(x, y);
-
                 // Preserve transparent pixels
                 if (c.getOpacity() == 0.0) {
                     writer.setColor(x, y, c);
                     continue;
                 }
-
                 int idx = closestColorIndex(c);
                 writer.setColor(x, y, theme[idx]);
             }
         }
-
         return output;
     }
 

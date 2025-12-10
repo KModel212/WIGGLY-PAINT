@@ -22,9 +22,28 @@ import gui.BrushPane;
 import gui.CanvasPane;
 import gui.MenuPane;
 
-
+/**
+ * Main entry point for the WigglyPaint application.
+ * <p>
+ * Responsible for initializing:
+ * <ul>
+ *     <li>Root layout</li>
+ *     <li>Canvas subsystem</li>
+ *     <li>Theme refresh listeners</li>
+ *     <li>Menu and brush UI panels</li>
+ *     <li>Controllers for canvas, brushes, and menu</li>
+ *     <li>Stage and window configuration (undecorated window)</li>
+ * </ul>
+ * No application logic is modified here; only UI structure is assembled.
+ */
 public class Main extends Application {
 
+    /**
+     * Initializes and displays the main JavaFX stage.
+     *
+     * @param primaryStage the primary stage provided by JavaFX runtime
+     * @throws Exception if initialization fails
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -64,13 +83,17 @@ public class Main extends Application {
         // ============================================================
         BrushPane brushPane = new BrushPane();
         BrushController brushController = new BrushController(brushPane);
+
+        // Rebind recolored icons when theme changes
         brushPane.setOnThemeRefreshed(brushController::rebindIcons);
 
 
         // ============================================================
         // CANVAS CONTROLLER + WIGGLE LOOP
         // ============================================================
-        CanvasController canvasController = new CanvasController(canvasPane, canvasData, brushController);
+        CanvasController canvasController = new CanvasController(
+                canvasPane, canvasData, brushController
+        );
         canvasController.startWiggleLoop();
 
 
@@ -98,7 +121,11 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-
+    /**
+     * Launches the JavaFX application.
+     *
+     * @param args program arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }

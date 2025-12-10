@@ -1,0 +1,131 @@
+@startuml
+class render.ImageThemeRender {
+- {static} Color[] SRC_COLORS
+- {static} Color[] getThemeColors()
++ {static} Image recolor(Image)
+- {static} int closestColorIndex(Color)
+- {static} double colorDistance(Color,Color)
+}
+
+
+class gui.BrushPane {
+- Image pencilSrc
+- Image fountainSrc
+- Image highlightASrc
+- Image highlightBSrc
+- Image highlightCSrc
+- Image markerSrc
+- Image spraySrc
+- Image eraserSrc
++ ImageView pencilIcon
++ ImageView fountainIcon
++ ImageView highlightAIcon
++ ImageView highlightBIcon
++ ImageView highlightCIcon
++ ImageView markerIcon
++ ImageView sprayIcon
++ ImageView eraserIcon
+- Runnable onThemeRefreshed
+- ImageView makeIcon(Image)
+- List<ImageView> getAllIcons()
++ void setOnThemeRefreshed(Runnable)
++ ImageView getIconFor(String)
++ void refreshTheme()
+}
+
+
+class utils.gif.GifSequenceWriter {
+- ImageWriter writer
+- ImageWriteParam params
+- IIOMetadata metadata
++ void writeFrame(BufferedImage)
++ void close()
+}
+
+
+class utils.themes.ThemeManager {
+- {static} Theme currentTheme
+- {static} List<Runnable> listeners
++ {static} Theme get()
++ {static} void setTheme(String)
++ {static} void addListener(Runnable)
+}
+
+
+class utils.themes.Theme {
++ String name
++ Color bg
++ Color fg
++ Color primary
++ Color secondary
++ Color accent
+- Color loadColor(String)
+}
+
+
+class utils.config.Config {
+- {static} Properties props
+- {static} void load(String)
++ {static} String getString(String)
++ {static} double getDouble(String)
++ {static} int getInt(String)
+}
+
+
+class application.Main {
++ void start(Stage)
++ {static} void main(String[])
+}
+
+class gui.CanvasPane {
+- {static} int internalSize
+- {static} int displaySize
++ Canvas layer0
++ Canvas layer1
++ Canvas layer2
++ Canvas layer3
+- StackPane layerPane
+- void redrawBackground()
++ double toInternalX(double)
++ double toInternalY(double)
++ int getInternalSize()
++ int getDisplaySize()
++ int getCanvasSize()
++ Canvas getCursorLayer()
++ void clearCursor()
+}
+
+
+class gui.MenuPane {
++ HBox menuBar
++ Label btnUmm
++ Label btnNewCanvas
++ Label btnExportGIF
++ Label btnTheme
++ Label btnExit
++ ContextMenu themeMenu
+- Line bottomLine
+- Font font
+- Label createBtn(String)
+# void layoutChildren()
+}
+
+
+class render.BackgroundRender {
+- {static} Background currentBackground
+- {static} int lastSpacing
+- {static} double lastRadius
+- {static} void refreshTheme()
++ {static} Background dotBackgroundFromConfig()
++ {static} Background dotBackground(int,double,Color,Color)
+- {static} Image createDotTile(int,double,Color,Color)
+}
+
+
+
+
+javafx.scene.layout.VBox <|-- gui.BrushPane
+javafx.application.Application <|-- application.Main
+javafx.scene.layout.Pane <|-- gui.CanvasPane
+gui.Pane <|-- gui.MenuPane
+@enduml

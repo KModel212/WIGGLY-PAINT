@@ -1,0 +1,62 @@
+@startuml
+abstract class brush.AbstractSpray {
+# void sprayCircle(CanvasData,double,double,int,int,int,int)
+}
+
+class brush.EraserBrush {
+# void stamp(CanvasData,double,double,int,int,int)
++ void resetStroke()
+}
+
+abstract class brush.AbstractBrush {
+# int baseSize
+# double speedScale
+# int colorIndex
+# double lastX
+# double lastY
+# Random random
+# {abstract}void stamp(CanvasData,double,double,int,int,int)
+# void stampLine(CanvasData,double,double,double,double,int,int,int)
+# boolean shape(int,int,int)
+# int computeSize(double)
++ void resetStroke()
++ void paintOnEveryLayer(CanvasData,double,double,double)
++ int getBaseSize()
++ int getColorIndex()
+}
+
+
+class brush.HighlightBrush {
+# void stamp(CanvasData,double,double,int,int,int)
++ void paintOnEveryLayer(CanvasData,double,double,double)
+}
+
+class brush.SprayBrush {
+# void stamp(CanvasData,double,double,int,int,int)
+}
+
+interface brush.Paintable {
+~ void paintOnEveryLayer(CanvasData,double,double,double)
+~ void resetStroke()
+}
+
+class brush.PencilBrush {
+# void stamp(CanvasData,double,double,int,int,int)
++ void paintOnEveryLayer(CanvasData,double,double,double)
+}
+
+class brush.FountainBrush {
+# void stamp(CanvasData,double,double,int,int,int)
++ void paintOnEveryLayer(CanvasData,double,double,double)
+}
+
+
+
+brush.AbstractBrush <|-- brush.AbstractSpray
+brush.AbstractBrush <|-- brush.EraserBrush
+brush.Paintable <|.. brush.AbstractBrush
+brush.AbstractBrush <|-- brush.HighlightBrush
+brush.AbstractSpray <|-- brush.SprayBrush
+brush.AbstractBrush <|-- brush.PencilBrush
+brush.AbstractBrush <|-- brush.FountainBrush
+@enduml

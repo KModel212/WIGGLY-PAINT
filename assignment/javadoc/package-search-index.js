@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"application"},{"l":"brush"},{"l":"canvas"},{"l":"controller"},{"l":"grader"},{"l":"gui"},{"l":"render"},{"l":"utils.config"},{"l":"utils.gif"},{"l":"utils.themes"}];updateSearchResults();

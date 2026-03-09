@@ -72,14 +72,6 @@ The full project report can be found in:
 src/main/assignment/report
 ```
 
-The report includes:
-
-* System overview
-* Software architecture
-* Feature explanations
-* Design decisions
-* Example outputs
-
 ---
 
 ## 🧱 Technologies Used
